@@ -89,6 +89,7 @@ static NSString *reuseID = @"photoBrowser";
     DMPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseID forIndexPath:indexPath];
     
     cell.url = _arrUrl[indexPath.row];
+    cell.srcImageView = _arrSrcImageView[indexPath.row];
     
     return cell;
     
