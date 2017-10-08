@@ -18,6 +18,8 @@
 		E42578D11F89EAF600192CE4 /* DMPhotoBrowserUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578D01F89EAF600192CE4 /* DMPhotoBrowserUITests.m */; };
 		E42578E01F89FF4D00192CE4 /* images.plist in Resources */ = {isa = PBXBuildFile; fileRef = E42578DF1F89FF4D00192CE4 /* images.plist */; };
 		E42578E31F8A007400192CE4 /* UIView+layout.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578E21F8A007400192CE4 /* UIView+layout.m */; };
+		E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */; };
+		E42578EB1F8A33C800192CE4 /* DMPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +62,10 @@
 		E42578DF1F89FF4D00192CE4 /* images.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = images.plist; sourceTree = "<group>"; };
 		E42578E11F8A007400192CE4 /* UIView+layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+layout.h"; sourceTree = "<group>"; };
 		E42578E21F8A007400192CE4 /* UIView+layout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+layout.m"; sourceTree = "<group>"; };
+		E42578E61F8A26F600192CE4 /* DMPhotoBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPhotoBrowser.h; sourceTree = "<group>"; };
+		E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoBrowser.m; sourceTree = "<group>"; };
+		E42578E91F8A33C800192CE4 /* DMPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPhotoCell.h; sourceTree = "<group>"; };
+		E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +182,10 @@
 			children = (
 				E42578E11F8A007400192CE4 /* UIView+layout.h */,
 				E42578E21F8A007400192CE4 /* UIView+layout.m */,
+				E42578E61F8A26F600192CE4 /* DMPhotoBrowser.h */,
+				E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */,
+				E42578E91F8A33C800192CE4 /* DMPhotoCell.h */,
+				E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */,
 			);
 			path = DMPhotoBrowser;
 			sourceTree = "<group>";
@@ -367,6 +377,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E42578E31F8A007400192CE4 /* UIView+layout.m in Sources */,
+				E42578EB1F8A33C800192CE4 /* DMPhotoCell.m in Sources */,
+				E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */,
 				E42578B31F89EAF600192CE4 /* ViewController.m in Sources */,
 				E42578B01F89EAF600192CE4 /* AppDelegate.m in Sources */,
 				E42578AD1F89EAF600192CE4 /* main.m in Sources */,

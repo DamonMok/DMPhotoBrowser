@@ -9,10 +9,15 @@
 #import "ViewController.h"
 #import "UIView+layout.h"
 #import <UIImageView+WebCache.h>
+#import "DMPhotoBrowser.h"
+
 @interface ViewController ()
 
 //url
 @property (nonatomic, strong)NSArray *arrUrl;
+
+//小图UIImageView
+@property (nonatomic, strong)NSMutableArray *arrThumbnailImgViews;
 
 @end
 
@@ -29,9 +34,18 @@
     return _arrUrl;
 }
 
+- (NSMutableArray *)arrThumbnailImgViews {
+
+    if (!_arrThumbnailImgViews) {
+        
+        _arrThumbnailImgViews = [NSMutableArray array];
+    }
+    
+    return _arrThumbnailImgViews;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     
     [self initViews];
 }
@@ -39,7 +53,6 @@
 - (void)initViews {
     
     self.view.backgroundColor = [UIColor whiteColor];
-    self.automaticallyAdjustsScrollViewInsets = NO;
     
     CGFloat margin = 10;
     
@@ -59,6 +72,10 @@
         imageView.userInteractionEnabled = YES;
         imageView.tag = i;
         
+        //Gesture
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandle:)];
+        [imageView addGestureRecognizer:tap];
+        
         NSURL *url = [NSURL URLWithString:self.arrUrl[i][@"thumbnail"]];
         [imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageProgressiveDownload];
         
@@ -72,8 +89,28 @@
         
         [self.view addSubview:imageView];
         
+        [self.arrThumbnailImgViews addObject:imageView];
+        
     }
     
+}
+
+
+- (void)tapHandle:(UITapGestureRecognizer *)tap {
+
+    //获取大图URL
+    NSMutableArray *arrUrl = [NSMutableArray array];
+    
+    for (NSDictionary *dicUrl in self.arrUrl) {
+        
+        NSURL *url = [NSURL URLWithString:dicUrl[@"large"]];
+        [arrUrl addObject:url];
+    }
+    
+    //Browser
+    DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];
+    
+    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews];
 }
 
 
