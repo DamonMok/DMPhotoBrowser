@@ -9,11 +9,9 @@
 #import "DMPhotoCell.h"
 #import <UIImageView+WebCache.h>
 #import "UIView+layout.h"
+#import "DMProgressView.h"
 
-@interface DMPhotoCell (){
-
-    BOOL _download;
-}
+@interface DMPhotoCell ()
 
 @property (nonatomic, strong)UIImageView *imageView;
 
@@ -46,7 +44,8 @@
 - (void)initViews {
 
     self.contentView.backgroundColor = [UIColor blueColor];
-    
+ 
+    [self.contentView addSubview:self.imageView];
 }
 
 - (void)setSrcImageView:(UIImageView *)srcImageView {
@@ -55,44 +54,34 @@
     
     srcImageView.hidden = self.hideSrcImageView;
     
-    _download = NO;
-    
     //placeholder image
     self.imageView.image = srcImageView.image;
     //get thumbnail-imageView's frame
     self.imageView.frame = srcImageView.frame;
-    self.imageView.hidden = YES;
-    [self.contentView addSubview:self.imageView];
     
+    DMProgressView *progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
     [self.imageView sd_setImageWithURL:self.url placeholderImage:srcImageView.image options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+        
         //download from internet
-        if (!_download) {
-        
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                CGFloat duration = _showAnimation ? 0.2 : 0;
-                
-                [UIView animateWithDuration:duration animations:^{
-                    
-                    self.imageView.center = self.contentView.center;
-                    self.imageView.hidden = NO;
-                }];
-                
-                _showAnimation = YES;
-            });
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            _download = YES;
-        }
-        
-        if (receivedSize/expectedSize == 1) {
+            CGFloat duration = _showAnimation ? 0.2 : 0;
+            [UIView animateWithDuration:duration animations:^{
+                
+                self.imageView.center = self.contentView.center;
+            } completion:^(BOOL finished) {
+                
+                progressView.process = (float)receivedSize/expectedSize;
+            }];
             
-            NSLog(@"finish");
-        }
+            _showAnimation = YES;
+            
+        });
         
     } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         
-        self.imageView.hidden = NO;
-        
+        [progressView hideProgressView];
+                
         CGSize imageSize = self.imageView.image.size;
         
         CGFloat imageScale = imageSize.width/imageSize.height;

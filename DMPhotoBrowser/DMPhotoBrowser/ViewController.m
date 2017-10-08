@@ -106,8 +106,8 @@
         NSURL *url = [NSURL URLWithString:dicUrl[@"large"]];
         [arrUrl addObject:url];
     }
-    [[SDImageCache sharedImageCache] clearMemory];
-    [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
+//    [[SDImageCache sharedImageCache] clearMemory];
+//    [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
     //Browser
     DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];
     photoBrowser.index = (int)tap.view.tag;

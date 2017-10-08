@@ -20,6 +20,7 @@
 		E42578E31F8A007400192CE4 /* UIView+layout.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578E21F8A007400192CE4 /* UIView+layout.m */; };
 		E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */; };
 		E42578EB1F8A33C800192CE4 /* DMPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */; };
+		E42578EE1F8A808C00192CE4 /* DMProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578ED1F8A808C00192CE4 /* DMProgressView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,8 @@
 		E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoBrowser.m; sourceTree = "<group>"; };
 		E42578E91F8A33C800192CE4 /* DMPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPhotoCell.h; sourceTree = "<group>"; };
 		E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoCell.m; sourceTree = "<group>"; };
+		E42578EC1F8A808C00192CE4 /* DMProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProgressView.h; sourceTree = "<group>"; };
+		E42578ED1F8A808C00192CE4 /* DMProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProgressView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +189,8 @@
 				E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */,
 				E42578E91F8A33C800192CE4 /* DMPhotoCell.h */,
 				E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */,
+				E42578EC1F8A808C00192CE4 /* DMProgressView.h */,
+				E42578ED1F8A808C00192CE4 /* DMProgressView.m */,
 			);
 			path = DMPhotoBrowser;
 			sourceTree = "<group>";
@@ -376,6 +381,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E42578EE1F8A808C00192CE4 /* DMProgressView.m in Sources */,
 				E42578E31F8A007400192CE4 /* UIView+layout.m in Sources */,
 				E42578EB1F8A33C800192CE4 /* DMPhotoCell.m in Sources */,
 				E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */,
