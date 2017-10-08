@@ -16,4 +16,9 @@
 //thumbnail's imageView
 @property (nonatomic, strong)UIImageView *srcImageView;
 
+//By default, when viewing a large image,hide the corresponding thumbnail's imageView
+@property (nonatomic, assign)BOOL hideSrcImageView;
+
+@property (nonatomic, assign)BOOL showAnimation;
+
 @end

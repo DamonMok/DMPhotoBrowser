@@ -10,6 +10,11 @@
 
 @interface DMPhotoBrowser : UIView
 
+@property (nonatomic, assign)int index;
+
+//By default, when viewing a large image,hide the corresponding thumbnail's imageView
+@property (nonatomic, assign)BOOL hideSrcImageView;
+
 - (void)showWithUrls:(nonnull NSArray<NSURL *> *)urls thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews;
 
 @end

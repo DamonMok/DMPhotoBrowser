@@ -13,10 +13,13 @@
 static NSString *reuseID = @"photoBrowser";
 #define margin 10
 
-@interface DMPhotoBrowser ()<UICollectionViewDataSource>{
+@interface DMPhotoBrowser ()<UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate>{
 
     NSArray *_arrUrl;
     NSArray *_arrSrcImageView;
+    
+    //Show the animation when clicking on the thumbnail-imageView or download finished
+    BOOL _showAnimation;
 }
 
 @property (nonatomic, strong)UICollectionView *collectionView;
@@ -30,7 +33,11 @@ static NSString *reuseID = @"photoBrowser";
     
     _arrUrl = [NSArray arrayWithArray:urls];
     _arrSrcImageView = [NSArray arrayWithArray:imageViews];
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_index inSection:0];
+    [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
 }
+
 
 #pragma mark - lazy load
 - (UICollectionView *)collectionView {
@@ -46,6 +53,7 @@ static NSString *reuseID = @"photoBrowser";
         [_collectionView registerClass:[DMPhotoCell class] forCellWithReuseIdentifier:reuseID];
         _collectionView.pagingEnabled = YES;
         _collectionView.dataSource = self;
+        _collectionView.delegate = self;
     
     }
     
@@ -56,6 +64,9 @@ static NSString *reuseID = @"photoBrowser";
 - (instancetype)init {
 
     if (self = [super init]) {
+        
+        self.hideSrcImageView = YES;
+        _showAnimation = YES;
         
         [self initViews];
     }
@@ -87,12 +98,20 @@ static NSString *reuseID = @"photoBrowser";
 - (__kindof DMPhotoCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
 
     DMPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseID forIndexPath:indexPath];
-    
+   
+    cell.hideSrcImageView = _hideSrcImageView;
+    cell.showAnimation = _showAnimation;
     cell.url = _arrUrl[indexPath.row];
     cell.srcImageView = _arrSrcImageView[indexPath.row];
     
     return cell;
     
+}
+
+#pragma mark - UICollectionView delegate
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    
+    _showAnimation = NO;
 }
 
 @end
