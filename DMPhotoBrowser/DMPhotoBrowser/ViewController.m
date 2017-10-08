@@ -8,12 +8,26 @@
 
 #import "ViewController.h"
 #import "UIView+layout.h"
-
+#import <UIImageView+WebCache.h>
 @interface ViewController ()
+
+//url
+@property (nonatomic, strong)NSArray *arrUrl;
 
 @end
 
 @implementation ViewController
+
+- (NSArray *)arrUrl {
+
+    if (!_arrUrl) {
+        
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"images.plist" ofType:nil];
+        _arrUrl = [NSArray arrayWithContentsOfFile:path];
+    }
+    
+    return _arrUrl;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -36,7 +50,7 @@
     int row = 0;
     int col = 0;
     
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < self.arrUrl.count; i++) {
         
         UIImageView *imageView = [[UIImageView alloc] init];
         imageView.backgroundColor = [UIColor blackColor];
@@ -44,6 +58,9 @@
         imageView.layer.masksToBounds = YES;
         imageView.userInteractionEnabled = YES;
         imageView.tag = i;
+        
+        NSURL *url = [NSURL URLWithString:self.arrUrl[i][@"thumbnail"]];
+        [imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageProgressiveDownload];
         
         row = i/3;
         col = i%3;
@@ -56,6 +73,7 @@
         [self.view addSubview:imageView];
         
     }
+    
 }
 
 

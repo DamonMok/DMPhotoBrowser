@@ -4,10 +4,66 @@
 <array>
 	<dict>
 		<key>thumbnail</key>
-		<string></string>
+		<string>http://wx2.sinaimg.cn/thumb150/78d702b2gy1fk070eb2p7j210m0m8wqv.jpg</string>
 		<key>large</key>
-		<string></string>
+		<string>http://wx2.sinaimg.cn/mw690/78d702b2gy1fk070eb2p7j210m0m8wqv.jpg</string>
 	</dict>
-	<dict/>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx3.sinaimg.cn/thumb150/78d702b2gy1fk0711tqdoj20xn0m8amj.jpg</string>
+        <key>large</key>
+        <string>http://wx3.sinaimg.cn/mw690/78d702b2gy1fk0711tqdoj20xn0m8amj.jpg</string>
+    </dict>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx1.sinaimg.cn/thumb150/78d702b2gy1fk070f5fmuj20m80ui15i.jpg</string>
+        <key>large</key>
+        <string>http://wx1.sinaimg.cn/mw690/78d702b2gy1fk070f5fmuj20m80ui15i.jpg</string>
+    </dict>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx3.sinaimg.cn/thumb150/78d702b2gy1fk07113nccj20m80rsak6.jpg</string>
+        <key>large</key>
+        <string>http://wx3.sinaimg.cn/mw690/78d702b2gy1fk07113nccj20m80rsak6.jpg</string>
+    </dict>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx4.sinaimg.cn/thumb150/78d702b2gy1fk073aa84fj20q80xcqez.jpg</string>
+        <key>large</key>
+        <string>http://wx4.sinaimg.cn/mw690/78d702b2gy1fk073aa84fj20q80xcqez.jpg</string>
+    </dict>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx3.sinaimg.cn/thumb150/78d702b2gy1fk0710bp39j20m80u313u.jpg</string>
+        <key>large</key>
+        <string>http://wx3.sinaimg.cn/mw690/78d702b2gy1fk0710bp39j20m80u313u.jpg</string>
+    </dict>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx2.sinaimg.cn/thumb150/78d702b2gy1fk071ksxwkj20qo0x8487.jpg</string>
+        <key>large</key>
+        <string>http://wx2.sinaimg.cn/mw690/78d702b2gy1fk071ksxwkj20qo0x8487.jpg</string>
+    </dict>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx1.sinaimg.cn/thumb150/78d702b2gy1fk0729rjk5j218s0m8gz2.jpg</string>
+        <key>large</key>
+        <string>http://wx1.sinaimg.cn/mw690/78d702b2gy1fk0729rjk5j218s0m8gz2.jpg</string>
+    </dict>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx4.sinaimg.cn/thumb150/78d702b2gy1fk071k5kcuj20z80m8nav.jpg</string>
+        <key>large</key>
+        <string>http://wx4.sinaimg.cn/mw690/78d702b2gy1fk071k5kcuj20z80m8nav.jpg</string>
+    </dict>
+	
 </array>
 </plist>
