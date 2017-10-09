@@ -29,6 +29,8 @@
         _imageView = [[UIImageView alloc] init];
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.layer.masksToBounds = YES;
+        _imageView.userInteractionEnabled = YES;
+    
     }
     
     return _imageView;
@@ -45,9 +47,10 @@
 }
 
 - (void)initViews {
-
-    self.contentView.backgroundColor = [UIColor blueColor];
  
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandle:)];
+    [self.contentView addGestureRecognizer:tap];
+    
     [self.contentView addSubview:self.imageView];
 }
 
@@ -99,6 +102,16 @@
             self.imageView.frame = CGRectMake(x, y, width, height);
         }];
     }];
+}
+
+#pragma mark - tap hanlde
+- (void)tapHandle:(UITapGestureRecognizer *)tap {
+
+    if ([self.delegate respondsToSelector:@selector(photoCell:hidePhotoFromLargeImgView:toThumbnailImgView:)]) {
+        
+        [self.delegate photoCell:self hidePhotoFromLargeImgView:_imageView toThumbnailImgView:_srcImageView];
+    }
+    
 }
 
 #pragma mark - Thumbnail-imageView

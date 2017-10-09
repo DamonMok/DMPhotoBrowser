@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol DMPhotoCellDelegate;
+
 @interface DMPhotoCell : UICollectionViewCell
 
 //URL of the large image
@@ -21,11 +23,21 @@
 
 @property (nonatomic, assign)BOOL showAnimation;
 
+@property (nonatomic, weak)id<DMPhotoCellDelegate> delegate;
 
 /**Hide source imageView*/
 - (void)hideSrcImgView;
 
 /**Show source imageView*/
 - (void)showSrcImgView;
+
+@end
+
+#pragma mark delegate
+@protocol DMPhotoCellDelegate <NSObject>
+
+@optional
+
+- (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toThumbnailImgView:(UIImageView *)srcImgView;
 
 @end

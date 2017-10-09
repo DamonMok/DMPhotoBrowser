@@ -13,7 +13,7 @@
 static NSString *reuseID = @"photoBrowser";
 #define margin 10
 
-@interface DMPhotoBrowser ()<UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate>{
+@interface DMPhotoBrowser ()<UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate, DMPhotoCellDelegate>{
 
     NSArray *_arrUrl;
     NSArray *_arrSrcImageView;
@@ -77,12 +77,11 @@ static NSString *reuseID = @"photoBrowser";
 - (void)initViews {
 
     //self
-    self.backgroundColor = [UIColor blackColor];
     self.frame = [UIApplication sharedApplication].keyWindow.bounds;
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     
     //collection
-    self.collectionView.backgroundColor = [UIColor redColor];
+    self.collectionView.backgroundColor = [UIColor blackColor];
     self.collectionView.frame = self.bounds;
     self.collectionView.dm_x -= margin;
     self.collectionView.dm_width += margin;
@@ -103,7 +102,8 @@ static NSString *reuseID = @"photoBrowser";
     cell.showAnimation = _showAnimation;
     cell.url = _arrUrl[indexPath.row];
     cell.srcImageView = _arrSrcImageView[indexPath.row];
-    NSLog(@"%ld", indexPath.row);
+    cell.delegate = self;
+    
     return cell;
     
 }
@@ -119,11 +119,25 @@ static NSString *reuseID = @"photoBrowser";
     [cell showSrcImgView];
 }
 
-
 #pragma mark - UIScrollView delegate
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     
     _showAnimation = NO;
+}
+
+#pragma DMPhotoCell delegate
+- (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toThumbnailImgView:(UIImageView *)srcImgView {
+
+    [UIView animateWithDuration:0.25 animations:^{
+        
+        largeImgView.frame = srcImgView.frame;
+        
+        self.collectionView.backgroundColor = [UIColor colorWithWhite:0.f alpha:0];
+    } completion:^(BOOL finished) {
+        
+        srcImgView.hidden = NO;
+        [self removeFromSuperview];
+    }];
 }
 
 @end
