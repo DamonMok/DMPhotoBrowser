@@ -38,6 +38,8 @@
 
 @optional
 
+
+/**Hide photo from large to small*/
 - (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toThumbnailImgView:(UIImageView *)srcImgView;
 
 @end

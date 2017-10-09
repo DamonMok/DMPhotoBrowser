@@ -11,16 +11,28 @@
 #import "UIView+layout.h"
 #import "DMProgressView.h"
 
-@interface DMPhotoCell (){
+@interface DMPhotoCell ()
 
-    DMProgressView *_progressView;
-}
+@property (nonatomic, strong)UIScrollView *scrollView;
 
 @property (nonatomic, strong)UIImageView *imageView;
 
 @end
 
 @implementation DMPhotoCell
+
+#pragma mark - lazy load
+- (UIScrollView *)scrollView {
+
+    if (!_scrollView) {
+        
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+        _scrollView.minimumZoomScale = 1;
+        _scrollView.maximumZoomScale = 2;
+    }
+    
+    return _scrollView;
+}
 
 - (UIImageView *)imageView {
 
@@ -36,6 +48,7 @@
     return _imageView;
 }
 
+#pragma mark - cycle
 - (instancetype)initWithFrame:(CGRect)frame {
 
     if (self = [super initWithFrame:frame]) {
@@ -48,10 +61,11 @@
 
 - (void)initViews {
  
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandle:)];
-    [self.contentView addGestureRecognizer:tap];
-    
-    [self.contentView addSubview:self.imageView];
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapHandle:)];
+    [self.contentView addGestureRecognizer:singleTap];
+        
+    [self.contentView addSubview:self.scrollView];
+    [self.scrollView addSubview:self.imageView];
 }
 
 - (void)setSrcImageView:(UIImageView *)srcImageView {
@@ -67,23 +81,30 @@
     [UIView animateWithDuration:duration animations:^{
         
         self.imageView.center = self.contentView.center;
+    } completion:^(BOOL finished) {
+        
+        [self loadImage];
     }];
     
-    _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
-    [self.imageView sd_setImageWithURL:self.url placeholderImage:srcImageView.image options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+}
+
+- (void)loadImage {
+
+    DMProgressView *progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
+    [self.imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         
         //download from internet
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            _progressView.process = (float)receivedSize/expectedSize;
+            progressView.process = (float)receivedSize/expectedSize;
             _showAnimation = YES;
             
         });
         
     } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                
-        [_progressView hideProgressView];
-                
+        
+        [progressView hideProgressView];
+        
         CGSize imageSize = self.imageView.image.size;
         
         CGFloat imageScale = imageSize.width/imageSize.height;
@@ -100,12 +121,15 @@
         [UIView animateWithDuration:duration animations:^{
             
             self.imageView.frame = CGRectMake(x, y, width, height);
+            
         }];
+        
+        self.scrollView.contentSize = CGSizeMake(width, height);
     }];
 }
 
 #pragma mark - tap hanlde
-- (void)tapHandle:(UITapGestureRecognizer *)tap {
+- (void)singleTapHandle:(UITapGestureRecognizer *)tap {
 
     if ([self.delegate respondsToSelector:@selector(photoCell:hidePhotoFromLargeImgView:toThumbnailImgView:)]) {
         

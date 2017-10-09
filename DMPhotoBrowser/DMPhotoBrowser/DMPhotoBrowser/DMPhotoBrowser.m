@@ -50,6 +50,8 @@ static NSString *reuseID = @"photoBrowser";
         flowLayout.sectionInset = UIEdgeInsetsMake(0, margin, 0, 0);
         
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
+        _collectionView.showsVerticalScrollIndicator = NO;
+        _collectionView.showsHorizontalScrollIndicator = NO;
         [_collectionView registerClass:[DMPhotoCell class] forCellWithReuseIdentifier:reuseID];
         _collectionView.pagingEnabled = YES;
         _collectionView.dataSource = self;
