@@ -12,7 +12,7 @@
 
 @interface DMPhotoCell : UICollectionViewCell
 
-//URL of the large image
+//URL of the large photo
 @property (nonatomic, strong)NSURL *url;
 
 //thumbnail's imageView

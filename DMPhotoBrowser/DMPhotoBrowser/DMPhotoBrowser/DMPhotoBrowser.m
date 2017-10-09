@@ -130,9 +130,11 @@ static NSString *reuseID = @"photoBrowser";
 #pragma DMPhotoCell delegate
 - (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toThumbnailImgView:(UIImageView *)srcImgView {
 
-    [UIView animateWithDuration:0.25 animations:^{
+    CGPoint endPoint = [cell.contentView convertPoint:CGPointMake(srcImgView.dm_x, srcImgView.dm_y) toView:largeImgView];
+    
+    [UIView animateWithDuration:0.35 animations:^{
         
-        largeImgView.frame = srcImgView.frame;
+        largeImgView.frame = CGRectMake(endPoint.x, endPoint.y, srcImgView.dm_width, srcImgView.dm_height);
         
         self.collectionView.backgroundColor = [UIColor colorWithWhite:0.f alpha:0];
     } completion:^(BOOL finished) {

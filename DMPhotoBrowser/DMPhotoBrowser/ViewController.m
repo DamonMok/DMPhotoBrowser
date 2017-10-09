@@ -16,7 +16,7 @@
 //url
 @property (nonatomic, strong)NSArray *arrUrl;
 
-//小图UIImageView
+//thumbnail's UIImageView
 @property (nonatomic, strong)NSMutableArray *arrThumbnailImgViews;
 
 @end
@@ -98,7 +98,7 @@
 
 - (void)tapHandle:(UITapGestureRecognizer *)tap {
 
-    //获取大图URL
+    //get large-photo's URL
     NSMutableArray *arrUrl = [NSMutableArray array];
     
     for (NSDictionary *dicUrl in self.arrUrl) {
@@ -106,8 +106,10 @@
         NSURL *url = [NSURL URLWithString:dicUrl[@"large"]];
         [arrUrl addObject:url];
     }
+   
     [[SDImageCache sharedImageCache] clearMemory];
     [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
+    
     //Browser
     DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];
     photoBrowser.index = (int)tap.view.tag;
