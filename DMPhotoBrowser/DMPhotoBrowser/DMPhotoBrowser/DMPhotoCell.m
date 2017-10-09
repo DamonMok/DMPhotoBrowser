@@ -55,8 +55,6 @@
 
     _srcImageView = srcImageView;
     
-    srcImageView.hidden = self.hideSrcImageView;
-    
     //placeholder image
     self.imageView.image = srcImageView.image;
     //get thumbnail-imageView's frame
@@ -103,9 +101,17 @@
     }];
 }
 
-- (void)clearReuse {
+#pragma mark - Thumbnail-imageView
+//hide
+- (void)hideSrcImgView {
 
-    [_progressView hideProgressView];
+    _srcImageView.hidden = _hideSrcImageView;
+}
+
+//show
+- (void)showSrcImgView {
+        
+    _srcImageView.hidden = !_hideSrcImageView;
 }
 
 @end

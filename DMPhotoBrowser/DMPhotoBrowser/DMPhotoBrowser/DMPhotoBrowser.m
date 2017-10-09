@@ -109,9 +109,14 @@ static NSString *reuseID = @"photoBrowser";
 }
 
 #pragma mark - UICollectionView delegate
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(DMPhotoCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+
+    [cell hideSrcImgView];
+}
+
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(DMPhotoCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
 
-//    [cell clearReuse];
+    [cell showSrcImgView];
 }
 
 

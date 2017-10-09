@@ -21,6 +21,11 @@
 
 @property (nonatomic, assign)BOOL showAnimation;
 
-- (void)clearReuse;
+
+/**Hide source imageView*/
+- (void)hideSrcImgView;
+
+/**Show source imageView*/
+- (void)showSrcImgView;
 
 @end
