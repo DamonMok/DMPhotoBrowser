@@ -21,4 +21,6 @@
 
 @property (nonatomic, assign)BOOL showAnimation;
 
+- (void)clearReuse;
+
 @end

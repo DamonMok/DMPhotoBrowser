@@ -103,12 +103,19 @@ static NSString *reuseID = @"photoBrowser";
     cell.showAnimation = _showAnimation;
     cell.url = _arrUrl[indexPath.row];
     cell.srcImageView = _arrSrcImageView[indexPath.row];
-    
+    NSLog(@"%ld", indexPath.row);
     return cell;
     
 }
 
 #pragma mark - UICollectionView delegate
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(DMPhotoCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+
+//    [cell clearReuse];
+}
+
+
+#pragma mark - UIScrollView delegate
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     
     _showAnimation = NO;

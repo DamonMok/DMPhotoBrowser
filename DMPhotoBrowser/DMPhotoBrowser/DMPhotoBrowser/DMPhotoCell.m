@@ -11,7 +11,10 @@
 #import "UIView+layout.h"
 #import "DMProgressView.h"
 
-@interface DMPhotoCell ()
+@interface DMPhotoCell (){
+
+    DMProgressView *_progressView;
+}
 
 @property (nonatomic, strong)UIImageView *imageView;
 
@@ -59,28 +62,26 @@
     //get thumbnail-imageView's frame
     self.imageView.frame = srcImageView.frame;
     
-    DMProgressView *progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
+    CGFloat duration = _showAnimation ? 0.2 : 0;
+    [UIView animateWithDuration:duration animations:^{
+        
+        self.imageView.center = self.contentView.center;
+    }];
+    
+    _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
     [self.imageView sd_setImageWithURL:self.url placeholderImage:srcImageView.image options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         
         //download from internet
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            CGFloat duration = _showAnimation ? 0.2 : 0;
-            [UIView animateWithDuration:duration animations:^{
-                
-                self.imageView.center = self.contentView.center;
-            } completion:^(BOOL finished) {
-                
-                progressView.process = (float)receivedSize/expectedSize;
-            }];
-            
+            _progressView.process = (float)receivedSize/expectedSize;
             _showAnimation = YES;
             
         });
         
     } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-        
-        [progressView hideProgressView];
+                
+        [_progressView hideProgressView];
                 
         CGSize imageSize = self.imageView.image.size;
         
@@ -100,6 +101,11 @@
             self.imageView.frame = CGRectMake(x, y, width, height);
         }];
     }];
+}
+
+- (void)clearReuse {
+
+    [_progressView hideProgressView];
 }
 
 @end
