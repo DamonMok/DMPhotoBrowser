@@ -76,6 +76,8 @@
     if (!_gifView) {
         
         _gifView = [FLAnimatedImageView new];
+        _gifView.contentMode = UIViewContentModeScaleAspectFill;
+        _gifView.layer.masksToBounds = YES;
         _gifView.userInteractionEnabled = YES;
         
     }
