@@ -121,7 +121,7 @@
     pan.delegate = self;
     [pan requireGestureRecognizerToFail:singleTap];
     
-    [self.containerView addGestureRecognizer:doubleTap];
+    [self.contentView addGestureRecognizer:doubleTap];
     [self.contentView addGestureRecognizer:singleTap];
     [self.contentView addGestureRecognizer:pan];
 }
@@ -266,12 +266,17 @@
     
     if (pan.state == UIGestureRecognizerStateBegan) {
         
-        _panStartPoint = [_containerView convertPoint:CGPointZero toView:self.contentView];
+        _panStartPoint = CGPointMake(_containerView.dm_x, _containerView.dm_y);
+        
+        if (_scrollView.contentSize.height > _scrollView.dm_height) {
+            
+            _panStartPoint = CGPointZero;
+        }
         
         _panStartFrame = _containerView.frame;
         
     }
-    
+
     CGPoint draggingPoint = [pan translationInView:pan.view];
     
     //Update the coordinates
@@ -294,11 +299,11 @@
     if (self.DMPhotoCellPanStateChange) {
         self.DMPhotoCellPanStateChange(1-(fabs(draggingPoint.y)/200));
     }
-    
+
     if (pan.state == UIGestureRecognizerStateEnded) {
         
-        if (fabs(draggingPoint.y) > 200) {
-            //large -> thumbnail
+        if ([self shouldExitPhotoBrowser]) {
+            //exit the photoBrowser:large -> thumbnail
             [UIView animateWithDuration:0.3 animations:^{
                 
                 _containerView.frame = _srcImageView.frame;
@@ -342,6 +347,32 @@
             self.DMPhotoCellPanStateEnd();
         }
     }
+}
+
+//Check if you need to exit the photoBrowser
+- (BOOL)shouldExitPhotoBrowser {
+    
+    if (_scrollView.contentSize.height <= _scrollView.dm_height) {
+
+        if (fabs((_containerView.dm_centerY-_scrollView.dm_centerY))>200) {
+            
+            return YES;
+        }
+    } else {
+    
+        //pull down
+        CGPoint downP = [_containerView convertPoint:CGPointZero toView:self.contentView];
+        
+        //pull up
+        CGPoint upP = [_containerView convertPoint:CGPointMake(0, _containerView.dm_height) toView:self.contentView];
+        
+        if(downP.y>_scrollView.dm_centerY || upP.y < _scrollView.dm_centerY) {
+        
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 #pragma mark - UIGestureRecognizer delegate
