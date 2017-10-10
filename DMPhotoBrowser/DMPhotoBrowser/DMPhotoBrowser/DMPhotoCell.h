@@ -15,7 +15,7 @@
 //URL of the large photo
 @property (nonatomic, strong)NSURL *url;
 
-//thumbnail's imageView
+//Thumbnail's imageView
 @property (nonatomic, strong)UIImageView *srcImageView;
 
 //By default, when viewing a large image,hide the corresponding thumbnail's imageView
@@ -25,11 +25,12 @@
 
 @property (nonatomic, weak)id<DMPhotoCellDelegate> delegate;
 
-/**Hide source imageView*/
-- (void)hideSrcImgView;
 
-/**Show source imageView*/
-- (void)showSrcImgView;
+/**The operations befor the cell will display*/
+- (void)willDisplayCell;
+
+/**The operations after the cell is displayed*/
+- (void)didEndDisplayingCell;
 
 @end
 

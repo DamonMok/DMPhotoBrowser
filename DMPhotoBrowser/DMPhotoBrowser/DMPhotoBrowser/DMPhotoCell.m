@@ -267,17 +267,24 @@
     _containerView.center = CGPointMake(_scrollView.contentSize.width*0.5+offsetX, _scrollView.contentSize.height*0.5+offsetY);
 }
 
-#pragma mark - Thumbnail-imageView
-//hide
-- (void)hideSrcImgView {
+#pragma mark - cell's cycle
+- (void)willDisplayCell {
 
     _srcImageView.hidden = _hideSrcImageView;
+    
+    if (_isGif) {
+        [self playGif];
+    }
 }
 
-//show
-- (void)showSrcImgView {
-        
+- (void)didEndDisplayingCell {
+
     _srcImageView.hidden = !_hideSrcImageView;
+    
+    if (_isGif) {
+        [self pauseGif];
+    }
 }
+
 
 @end
