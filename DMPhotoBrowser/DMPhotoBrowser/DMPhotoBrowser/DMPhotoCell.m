@@ -200,36 +200,32 @@
     }];
 }
 
-//Load gif
+#pragma mark - Gif
 - (void)loadGif:(FLAnimatedImageView *)gifView {
 
     [self loadImage:gifView];
 }
 
 //pause
--(void)pauseGifOnLayer:(CALayer*)layer
+-(void)pauseGif
 {
-    CFTimeInterval pausedTime = [layer convertTime:CACurrentMediaTime() fromLayer:nil];
-    layer.speed = 0.0;
-    layer.timeOffset = pausedTime;
-    
+    [_gifView stopAnimating];
 }
 
--(void)playGifOnLayer:(CALayer*)layer
+//play
+-(void)playGif
 {
-    CFTimeInterval pausedTime = [layer timeOffset];
-    layer.speed = 1.0;
-    layer.timeOffset = 0.0;
-    layer.beginTime = 0.0;
-    CFTimeInterval timeSincePause = [layer convertTime:CACurrentMediaTime() fromLayer:nil] -    pausedTime;
-    layer.beginTime = timeSincePause;
-    
+    [_gifView startAnimating];
 }
 
 #pragma mark - tap hanlde
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
     
     UIImageView *imageView = _isGif ? _gifView : _imageView;
+    
+    if (_isGif) {
+        [self pauseGif];
+    }
     
     if ([self.delegate respondsToSelector:@selector(photoCell:hidePhotoFromLargeImgView:toThumbnailImgView:)]) {
         
