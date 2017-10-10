@@ -16,6 +16,8 @@
 @interface DMPhotoCell ()<UIScrollViewDelegate> {
 
     BOOL _isGif;
+    CGPoint _panStartPoint;
+    CGRect _panStartFrame;
 }
 
 @property (nonatomic, strong)UIScrollView *scrollView;
@@ -74,6 +76,7 @@
     if (!_gifView) {
         
         _gifView = [FLAnimatedImageView new];
+        _gifView.userInteractionEnabled = YES;
         
     }
     
@@ -114,8 +117,11 @@
     doubleTap.numberOfTouchesRequired = 1;
     [singleTap requireGestureRecognizerToFail:doubleTap];
     
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandle:)];
+    
     [self.containerView addGestureRecognizer:doubleTap];
     [self.contentView addGestureRecognizer:singleTap];
+    [self.containerView addGestureRecognizer:pan];
 }
 
 - (void)setSrcImageView:(UIImageView *)srcImageView {
@@ -218,7 +224,8 @@
     [_gifView startAnimating];
 }
 
-#pragma mark - tap hanlde
+#pragma mark - Gesture hanlde
+//singleTap
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
     
     UIImageView *imageView = _isGif ? _gifView : _imageView;
@@ -235,6 +242,7 @@
     }
 }
 
+//double tap
 - (void)doubleTapHandle:(UITapGestureRecognizer *)tap {
 
     CGPoint tapPoint = [tap locationInView:tap.view];
@@ -249,6 +257,86 @@
     CGRect zoomRect = CGRectMake(x, y, width, height);
     
     [_scrollView zoomToRect:zoomRect animated:YES];
+}
+
+//pan
+- (void)panHandle:(UIPanGestureRecognizer *)pan {
+    
+    if (pan.state == UIGestureRecognizerStateBegan) {
+        
+        _panStartPoint = [_containerView convertPoint:CGPointZero toView:self.contentView];
+        
+        _panStartFrame = _containerView.frame;
+        
+    }
+    
+    CGPoint draggingPoint = [pan translationInView:pan.view];
+    
+    //Update the coordinates
+    CGFloat scale = _containerView.dm_width/_containerView.dm_height;
+    _containerView.dm_x = _panStartPoint.x + draggingPoint.x;
+    _containerView.dm_y = _panStartPoint.y + draggingPoint.y;
+    _containerView.dm_width = _panStartFrame.size.width - fabs(draggingPoint.y)*0.5;
+    _containerView.dm_height = _containerView.dm_width/scale;
+    _containerView.dm_centerX += (KScreenWidth-_containerView.dm_width)*0.5;
+    
+    if (_isGif) {
+        
+        [self pauseGif];
+        _gifView.frame = _containerView.bounds;
+    } else {
+        
+        _imageView.frame = _containerView.bounds;
+    }
+    
+    if (self.DMPhotoCellPan) {
+        self.DMPhotoCellPan(1-(fabs(draggingPoint.y)/200));
+    }
+    
+    if (pan.state == UIGestureRecognizerStateEnded) {
+        
+        if (fabs(draggingPoint.y) > 200) {
+            //large -> thumbnail
+            [UIView animateWithDuration:0.3 animations:^{
+                
+                _containerView.frame = _srcImageView.frame;
+                
+                if (_isGif) {
+                    
+                    _gifView.frame = _containerView.bounds;
+                    
+                } else {
+                
+                    _imageView.frame = _containerView.bounds;
+                }
+                
+            } completion:^(BOOL finished) {
+                
+                _srcImageView.hidden = NO;
+                [(UIView *)_delegate removeFromSuperview];
+            }];
+            
+        } else {
+            //reset the coordinates
+            [UIView animateWithDuration:0.3 animations:^{
+                
+                _containerView.frame = _panStartFrame;
+                if (_isGif) {
+                    
+                    _gifView.frame = _containerView.bounds;
+                    [self playGif];
+                    
+                } else {
+                    
+                    _imageView.frame = _containerView.bounds;
+                }
+                if (self.DMPhotoCellPan) {
+                    self.DMPhotoCellPan(1);
+                }
+            }];
+        }
+    }
+    
 }
 
 #pragma mark - UIScrollView delegate

@@ -25,6 +25,10 @@
 
 @property (nonatomic, weak)id<DMPhotoCellDelegate> delegate;
 
+//This block will be called when UIPanGestureRecognizer is excuted
+//Use to change the alpha of background color
+@property (nonatomic, copy)void(^DMPhotoCellPan)(CGFloat alpha);
+
 
 /**The operations befor the cell will display*/
 - (void)willDisplayCell;

@@ -106,6 +106,12 @@ static NSString *reuseID = @"photoBrowser";
     cell.srcImageView = _arrSrcImageView[indexPath.row];
     cell.delegate = self;
     
+    __weak typeof(self) weakSelf = self;
+    cell.DMPhotoCellPan = ^(CGFloat alpha) {
+        
+        weakSelf.collectionView.backgroundColor = [UIColor colorWithWhite:0.f alpha:alpha];
+    };
+    
     return cell;
     
 }
