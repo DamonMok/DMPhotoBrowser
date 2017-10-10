@@ -25,9 +25,12 @@
 
 @property (nonatomic, weak)id<DMPhotoCellDelegate> delegate;
 
-//This block will be called when UIPanGestureRecognizer is excuted
 //Use to change the alpha of background color
-@property (nonatomic, copy)void(^DMPhotoCellPan)(CGFloat alpha);
+//This block will be called when UIPanGestureRecognizer is execute
+@property (nonatomic, copy)void(^DMPhotoCellPanStateChange)(CGFloat alpha);
+
+//This block will be called when UIPanGestureRecognizer ended
+@property (nonatomic, copy)void(^DMPhotoCellPanStateEnd)();
 
 
 /**The operations befor the cell will display*/
@@ -44,7 +47,7 @@
 @optional
 
 
-/**Hide photo from large to small*/
+/**Exit the photo browser*/
 - (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toThumbnailImgView:(UIImageView *)srcImgView;
 
 @end

@@ -13,7 +13,7 @@
 #import "UIView+layout.h"
 #import "DMProgressView.h"
 
-@interface DMPhotoCell ()<UIScrollViewDelegate> {
+@interface DMPhotoCell ()<UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
     BOOL _isGif;
     CGPoint _panStartPoint;
@@ -118,10 +118,12 @@
     [singleTap requireGestureRecognizerToFail:doubleTap];
     
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandle:)];
+    pan.delegate = self;
+    [pan requireGestureRecognizerToFail:singleTap];
     
     [self.containerView addGestureRecognizer:doubleTap];
     [self.contentView addGestureRecognizer:singleTap];
-    [self.containerView addGestureRecognizer:pan];
+    [self.contentView addGestureRecognizer:pan];
 }
 
 - (void)setSrcImageView:(UIImageView *)srcImageView {
@@ -289,8 +291,8 @@
         _imageView.frame = _containerView.bounds;
     }
     
-    if (self.DMPhotoCellPan) {
-        self.DMPhotoCellPan(1-(fabs(draggingPoint.y)/200));
+    if (self.DMPhotoCellPanStateChange) {
+        self.DMPhotoCellPanStateChange(1-(fabs(draggingPoint.y)/200));
     }
     
     if (pan.state == UIGestureRecognizerStateEnded) {
@@ -330,14 +332,50 @@
                     
                     _imageView.frame = _containerView.bounds;
                 }
-                if (self.DMPhotoCellPan) {
-                    self.DMPhotoCellPan(1);
+                if (self.DMPhotoCellPanStateChange) {
+                    self.DMPhotoCellPanStateChange(1);
                 }
             }];
         }
+       
+        if (self.DMPhotoCellPanStateEnd) {
+            self.DMPhotoCellPanStateEnd();
+        }
+    }
+}
+
+#pragma mark - UIGestureRecognizer delegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+
+    return YES;
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        
+        UIPanGestureRecognizer *pan = (UIPanGestureRecognizer *)gestureRecognizer;
+        CGPoint point = [pan translationInView:pan.view];
+        
+        if (fabs(point.y) - fabs(point.x) > 3) {
+            
+            if (_scrollView.contentSize.height<=KScreenHeight) {
+                //response
+                return YES;
+            } else {
+                
+                if ((_scrollView.contentOffset.y == 0 && point.y>0) || ((int)_scrollView.contentOffset.y >= (int)(_scrollView.contentSize.height-KScreenHeight) && point.y<0)) {
+                    //response the long photo
+                    return YES;
+                }
+            }
+        }
     }
     
+    return NO;
 }
+
+
 
 #pragma mark - UIScrollView delegate
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {

@@ -107,9 +107,15 @@ static NSString *reuseID = @"photoBrowser";
     cell.delegate = self;
     
     __weak typeof(self) weakSelf = self;
-    cell.DMPhotoCellPan = ^(CGFloat alpha) {
+    cell.DMPhotoCellPanStateChange = ^(CGFloat alpha) {
         
         weakSelf.collectionView.backgroundColor = [UIColor colorWithWhite:0.f alpha:alpha];
+        weakSelf.collectionView.scrollEnabled = NO;
+    };
+    
+    cell.DMPhotoCellPanStateEnd = ^{
+        
+        weakSelf.collectionView.scrollEnabled = YES;
     };
     
     return cell;
@@ -134,6 +140,7 @@ static NSString *reuseID = @"photoBrowser";
 }
 
 #pragma DMPhotoCell delegate
+//Exit the browser
 - (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toThumbnailImgView:(UIImageView *)srcImgView {
 
     CGPoint endPoint = [cell.contentView convertPoint:CGPointMake(srcImgView.dm_x, srcImgView.dm_y) toView:largeImgView];
