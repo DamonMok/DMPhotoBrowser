@@ -71,6 +71,13 @@
         <key>large</key>
         <string>http://wx2.sinaimg.cn/mw690/e9b3bee7gy1fkbr35nkozj20jo1xw12j.jpg</string>
     </dict>
+    
+    <dict>
+        <key>thumbnail</key>
+        <string>http://wx3.sinaimg.cn/thumbnail/76a1b64dly1fjxlipqhggg20be0634qq.gif</string>
+        <key>large</key>
+        <string>http://wx3.sinaimg.cn/bmiddle/76a1b64dly1fjxlipqhggg20be0634qq.gif</string>
+    </dict>
 	
 </array>
 </plist>

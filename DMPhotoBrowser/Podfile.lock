@@ -1,20 +1,26 @@
 PODS:
   - FBRetainCycleDetector (0.1.3)
+  - FLAnimatedImage (1.0.12)
   - MLeaksFinder (0.2.1):
     - FBRetainCycleDetector
   - SDWebImage (4.1.0):
     - SDWebImage/Core (= 4.1.0)
   - SDWebImage/Core (4.1.0)
+  - SDWebImage/GIF (4.1.0):
+    - FLAnimatedImage (~> 1.0)
+    - SDWebImage/Core
 
 DEPENDENCIES:
   - MLeaksFinder
   - SDWebImage (~> 4.1.0)
+  - SDWebImage/GIF
 
 SPEC CHECKSUMS:
   FBRetainCycleDetector: f0c7b290bf48ae77f6ae060843ce34ae341781eb
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   MLeaksFinder: 0850e2f2abc7227adc4d4e2d1992b431264eb4d5
   SDWebImage: 0e435c14e402a6730315a0fb79f95e68654d55a4
 
-PODFILE CHECKSUM: a8803f9dc22788793cdbaceab193cfe0817ae404
+PODFILE CHECKSUM: 39597831c57d96bac5f577d72fb3aac63af4472f
 
 COCOAPODS: 1.2.1

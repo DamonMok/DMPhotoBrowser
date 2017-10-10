@@ -144,4 +144,9 @@ static NSString *reuseID = @"photoBrowser";
     }];
 }
 
+- (void)dealloc {
+
+    NSLog(@"%s", __func__);
+}
+
 @end
