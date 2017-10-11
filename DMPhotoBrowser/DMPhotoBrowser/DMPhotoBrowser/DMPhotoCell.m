@@ -209,18 +209,15 @@
         CGFloat duration = _showAnimation ? 0.2 : 0;
         [UIView animateWithDuration:duration animations:^{
             
-            if (_isPan) {
-                
-                _finalFrame = CGRectMake(x, y, width, height);
-            } else {
+            if (!_isPan) {
                 
                 _containerView.frame = CGRectMake(x, y, width, height);
                 imageView.frame = _containerView.bounds;
             }
         }];
         
+        _finalFrame = CGRectMake(x, y, width, height);
         _scrollView.contentSize = CGSizeMake(width, height);
-        
         _downloadFinished = YES;
     }];
 }
