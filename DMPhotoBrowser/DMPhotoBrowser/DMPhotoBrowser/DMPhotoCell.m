@@ -15,6 +15,8 @@
 
 @interface DMPhotoCell ()<UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
+    
+    DMProgressView *_progressView;
     BOOL _isGif;
     BOOL _downloadFinished;
     CGPoint _panStartPoint;
@@ -67,7 +69,6 @@
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.layer.masksToBounds = YES;
         _imageView.userInteractionEnabled = YES;
-    
     }
     
     return _imageView;
@@ -81,7 +82,6 @@
         _gifView.contentMode = UIViewContentModeScaleAspectFill;
         _gifView.layer.masksToBounds = YES;
         _gifView.userInteractionEnabled = YES;
-        
     }
     
     return _gifView;
@@ -137,27 +137,26 @@
     _imageView.hidden = _isGif;
     _gifView.hidden = !_isGif;
     
-    _containerView.frame = _scrollView.bounds;
+    _containerView.frame = _srcImageView.frame;
     
     if (!_isGif) {
         
         //placeholder image
         _imageView.image = srcImageView.image;
         //get thumbnail-imageView's frame
-        _imageView.frame = srcImageView.frame;
+        _imageView.frame = _containerView.bounds;
         
     } else {
     
         _gifView.image = srcImageView.image;
-        _gifView.frame = srcImageView.frame;
+        _gifView.frame = _containerView.bounds;
     }
     
     
     CGFloat duration = _showAnimation ? 0.2 : 0;
     [UIView animateWithDuration:duration animations:^{
         
-        _imageView.center = self.contentView.center;
-        _gifView.center = self.contentView.center;
+        _containerView.center = self.contentView.center;
         
     } completion:^(BOOL finished) {
         
@@ -171,11 +170,11 @@
 
     _downloadFinished = NO;
     
-    DMProgressView *progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
+    _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
     //sdwebImage default Indicator
     //[_imageView sd_setShowActivityIndicatorView:YES];
     //[_imageView sd_setIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    [imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+    [imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed|SDWebImageLowPriority progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         
         //download from internet
         
@@ -186,7 +185,7 @@
             //reset the location of the imageView
             imageView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
             
-            progressView.process = (float)receivedSize/expectedSize;
+            _progressView.process = (float)receivedSize/expectedSize;
             _showAnimation = YES;
             
         });
@@ -194,7 +193,7 @@
     } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         
         //load from cache
-        [progressView hideProgressView];
+        [_progressView hideProgressView];
         
         CGSize imageSize = imageView.image.size;
         
@@ -282,6 +281,8 @@
     
     if (pan.state == UIGestureRecognizerStateBegan) {
         
+        _progressView.hidden = YES;
+        
         _panStartPoint = CGPointMake(_containerView.dm_x, _containerView.dm_y);
         
         if (_scrollView.contentSize.height > _scrollView.dm_height) {
@@ -295,13 +296,14 @@
 
     CGPoint draggingPoint = [pan translationInView:pan.view];
     
-    //Update the coordinates
+    //Update the frame
     CGFloat scale = _containerView.dm_width/_containerView.dm_height;
+    CGFloat decreaseValue = _containerView.dm_width > 150 ? fabs(draggingPoint.y)*0.5 : 0;
     _containerView.dm_x = _panStartPoint.x + draggingPoint.x;
     _containerView.dm_y = _panStartPoint.y + draggingPoint.y;
-    _containerView.dm_width = _panStartFrame.size.width - fabs(draggingPoint.y)*0.5;
+    _containerView.dm_width = _panStartFrame.size.width - decreaseValue;
     _containerView.dm_height = _containerView.dm_width/scale;
-    _containerView.dm_centerX += (KScreenWidth-_containerView.dm_width)*0.5;
+    _containerView.dm_centerX = KScreenWidth*0.5 + draggingPoint.x;
     
     if (_isGif) {
         
@@ -340,7 +342,7 @@
             }];
             
         } else {
-            //reset the coordinates
+            //reset the frame
             [UIView animateWithDuration:0.3 animations:^{
                 
                 _containerView.frame = _panStartFrame;
@@ -356,6 +358,8 @@
                 if (self.DMPhotoCellPanStateChange) {
                     self.DMPhotoCellPanStateChange(1);
                 }
+            } completion:^(BOOL finished) {
+                _progressView.hidden = _downloadFinished;
             }];
         }
        
