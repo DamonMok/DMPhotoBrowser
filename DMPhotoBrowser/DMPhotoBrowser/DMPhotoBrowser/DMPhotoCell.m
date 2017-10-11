@@ -221,14 +221,6 @@
     }];
 }
 
-//cancel all of the download operations
-- (void)cancelAllDownload {
-
-    _progressView.hidden = YES;
-    [[SDWebImageManager sharedManager] cancelAll];
-
-}
-
 #pragma mark - Gif
 - (void)loadGif:(FLAnimatedImageView *)gifView {
 
@@ -251,7 +243,7 @@
 //singleTap: exit the photoBrowser
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
     
-    [self cancelAllDownload];
+    _progressView.hidden = YES;
     
     UIImageView *imageView = _isGif ? _gifView : _imageView;
     
@@ -333,7 +325,7 @@
         if ([self shouldExitPhotoBrowser]) {
             //exit the photoBrowser:large -> thumbnail
             
-            [self cancelAllDownload];
+            _progressView.hidden = YES;
             
             [UIView animateWithDuration:0.3 animations:^{
                 
@@ -351,7 +343,6 @@
             } completion:^(BOOL finished) {
                 
                 _srcImageView.hidden = NO;
-                [[SDWebImageManager sharedManager] cancelAll];
                 [(UIView *)_delegate removeFromSuperview];
             }];
             
