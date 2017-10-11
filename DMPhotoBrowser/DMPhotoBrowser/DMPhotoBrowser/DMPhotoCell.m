@@ -15,13 +15,13 @@
 
 @interface DMPhotoCell ()<UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
-    
     DMProgressView *_progressView;
     BOOL _isGif;
     BOOL _downloadFinished;
-    CGPoint _panStartPoint;
-    CGRect _panStartFrame;
-    
+    CGPoint _panStartPoint;// x/y before panGesture
+    CGRect _panStartFrame;// frame before panGesture
+    BOOL _isPan;//UIPanGestureRecognizer is executing
+    CGRect _finalFrame;
 }
 
 @property (nonatomic, strong)UIScrollView *scrollView;
@@ -207,12 +207,16 @@
         CGFloat y = height < KScreenHeight ? (KScreenHeight-height)*0.5 : 0;
         
         CGFloat duration = _showAnimation ? 0.2 : 0;
-        
         [UIView animateWithDuration:duration animations:^{
             
-            _containerView.frame = CGRectMake(x, y, width, height);
-        
-            imageView.frame = _containerView.bounds;
+            if (_isPan) {
+                
+                _finalFrame = CGRectMake(x, y, width, height);
+            } else {
+                
+                _containerView.frame = CGRectMake(x, y, width, height);
+                imageView.frame = _containerView.bounds;
+            }
         }];
         
         _scrollView.contentSize = CGSizeMake(width, height);
@@ -280,7 +284,7 @@
 
 //pan
 - (void)panHandle:(UIPanGestureRecognizer *)pan {
-    
+    //began
     if (pan.state == UIGestureRecognizerStateBegan) {
         
         _progressView.hidden = YES;
@@ -294,6 +298,7 @@
         
         _panStartFrame = _containerView.frame;
         
+        _isPan = YES;
     }
 
     CGPoint draggingPoint = [pan translationInView:pan.view];
@@ -320,6 +325,7 @@
         self.DMPhotoCellPanStateChange(1-(fabs(draggingPoint.y)/200));
     }
 
+    //end
     if (pan.state == UIGestureRecognizerStateEnded) {
         
         if ([self shouldExitPhotoBrowser]) {
@@ -350,7 +356,7 @@
             //reset the frame
             [UIView animateWithDuration:0.3 animations:^{
                 
-                _containerView.frame = _panStartFrame;
+                _containerView.frame = _downloadFinished?_finalFrame:_panStartFrame;
                 if (_isGif) {
                     
                     _gifView.frame = _containerView.bounds;
@@ -371,6 +377,8 @@
         if (self.DMPhotoCellPanStateEnd) {
             self.DMPhotoCellPanStateEnd();
         }
+        
+        _isPan = NO;
     }
 }
 
