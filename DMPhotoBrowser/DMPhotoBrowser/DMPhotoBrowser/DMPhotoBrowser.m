@@ -97,7 +97,7 @@ static NSString *reuseID = @"photoBrowser";
 }
 
 - (__kindof DMPhotoCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-
+NSLog(@"%ld", indexPath.row);
     DMPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseID forIndexPath:indexPath];
    
     cell.hideSrcImageView = _hideSrcImageView;

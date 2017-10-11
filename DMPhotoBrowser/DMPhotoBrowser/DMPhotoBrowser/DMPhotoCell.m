@@ -174,7 +174,13 @@
     [imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         
         //download from internet
+        
+        //the location of imageView here may be changed after another picture download finished
+        
         dispatch_async(dispatch_get_main_queue(), ^{
+            
+            //reset the location of the imageView
+            imageView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
             
             progressView.process = (float)receivedSize/expectedSize;
             _showAnimation = YES;
