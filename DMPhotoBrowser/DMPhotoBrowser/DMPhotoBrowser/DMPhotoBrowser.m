@@ -143,7 +143,7 @@ NSLog(@"%ld", indexPath.row);
 #pragma DMPhotoCell delegate
 //Exit the browser
 - (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toThumbnailImgView:(UIImageView *)srcImgView {
-
+    
     CGPoint endPoint = [cell.contentView convertPoint:CGPointMake(srcImgView.dm_x, srcImgView.dm_y) toView:largeImgView];
     
     [UIView animateWithDuration:0.35 animations:^{
