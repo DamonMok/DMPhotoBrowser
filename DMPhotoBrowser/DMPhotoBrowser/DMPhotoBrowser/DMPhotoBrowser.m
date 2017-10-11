@@ -133,6 +133,7 @@ NSLog(@"%ld", indexPath.row);
     [cell didEndDisplayingCell];
 }
 
+
 #pragma mark - UIScrollView delegate
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     

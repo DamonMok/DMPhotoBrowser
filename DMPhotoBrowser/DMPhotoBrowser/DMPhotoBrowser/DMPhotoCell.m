@@ -16,8 +16,10 @@
 @interface DMPhotoCell ()<UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
     BOOL _isGif;
+    BOOL _downloadFinished;
     CGPoint _panStartPoint;
     CGRect _panStartFrame;
+    
 }
 
 @property (nonatomic, strong)UIScrollView *scrollView;
@@ -167,6 +169,8 @@
 //Load image
 - (void)loadImage:(UIImageView *)imageView {
 
+    _downloadFinished = NO;
+    
     DMProgressView *progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
     //sdwebImage default Indicator
     //[_imageView sd_setShowActivityIndicatorView:YES];
@@ -213,6 +217,8 @@
         }];
         
         _scrollView.contentSize = CGSizeMake(width, height);
+        
+        _downloadFinished = YES;
     }];
 }
 
@@ -255,6 +261,8 @@
 //double tap
 - (void)doubleTapHandle:(UITapGestureRecognizer *)tap {
 
+    if (!_downloadFinished) return;
+    
     CGPoint tapPoint = [tap locationInView:tap.view];
     
     CGFloat zoomScale = _scrollView.zoomScale == _scrollView.minimumZoomScale ? _scrollView.maximumZoomScale : _scrollView.minimumZoomScale;
@@ -413,7 +421,6 @@
     
     return NO;
 }
-
 
 
 #pragma mark - UIScrollView delegate
