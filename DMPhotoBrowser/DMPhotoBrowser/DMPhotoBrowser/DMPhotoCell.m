@@ -279,7 +279,7 @@ static NSString *reuseID = @"photoBrowser";
 
     if (!_downloadFinished) return;
     
-    CGPoint tapPoint = [tap locationInView:tap.view];
+    CGPoint tapPoint = [tap locationInView:_containerView];
     
     CGFloat zoomScale = _scrollView.zoomScale == _scrollView.minimumZoomScale ? _scrollView.maximumZoomScale : _scrollView.minimumZoomScale;
     

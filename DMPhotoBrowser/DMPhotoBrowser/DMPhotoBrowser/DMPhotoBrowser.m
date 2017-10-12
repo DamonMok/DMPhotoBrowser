@@ -76,7 +76,6 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         
         self.hideSrcImageView = YES;
         _showAnimation = YES;
-        
         [self initViews];
     }
     
@@ -108,11 +107,10 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     DMPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseID forIndexPath:indexPath];
    
     cell.hideSrcImageView = _hideSrcImageView;
-    cell.showAnimation = _showAnimation;
     cell.url = _arrUrl[indexPath.row];
     cell.srcImageView = _arrSrcImageView[indexPath.row];
     cell.delegate = self;
-    
+    NSLog(@"%ld", indexPath.row);
     __weak typeof(self) weakSelf = self;
     cell.DMPhotoCellPanStateChange = ^(CGFloat alpha) {
         
@@ -131,7 +129,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 #pragma mark - UICollectionView delegate
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(DMPhotoCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
-
+    
+    cell.showAnimation = (_index == indexPath.row && _showAnimation) ? YES : NO;
     [cell willDisplayCell];
 }
 
