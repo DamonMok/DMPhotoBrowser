@@ -182,7 +182,7 @@ static NSString *reuseID = @"photoBrowser";
     //sdwebImage default Indicator
     //[_imageView sd_setShowActivityIndicatorView:YES];
     //[_imageView sd_setIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    [imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+    [imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed|SDWebImageLowPriority progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         
         //download from internet
         
