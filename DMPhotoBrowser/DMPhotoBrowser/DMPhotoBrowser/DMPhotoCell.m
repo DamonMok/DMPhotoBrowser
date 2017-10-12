@@ -26,7 +26,7 @@ static NSString *reuseID = @"photoBrowser";
     CGRect _panStartFrame;// frame before panGesture
     BOOL _isPan;//UIPanGestureRecognizer is executing
     CGRect _finalFrame;
-
+    
 }
 
 @property (nonatomic, strong)UIScrollView *scrollView;
@@ -36,6 +36,8 @@ static NSString *reuseID = @"photoBrowser";
 @property (nonatomic, strong)UIImageView *imageView;
 
 @property (nonatomic, strong)FLAnimatedImageView *gifView;
+
+@property (nonatomic, strong)CADisplayLink *displayLink;
 
 @end
 
@@ -135,113 +137,8 @@ static NSString *reuseID = @"photoBrowser";
     [self.contentView addGestureRecognizer:pan];
 }
 
-- (void)setSrcImageView:(UIImageView *)srcImageView {
-
-    _srcImageView = srcImageView;
-    
-    _imageView.hidden = _isGif;
-    _gifView.hidden = !_isGif;
-    
-    _containerView.frame = _srcImageView.frame;
-    
-    if (!_isGif) {
-        
-        //placeholder image
-        _imageView.image = srcImageView.image;
-        //get thumbnail-imageView's frame
-        _imageView.frame = _containerView.bounds;
-        
-    } else {
-    
-        _gifView.image = srcImageView.image;
-        _gifView.frame = _containerView.bounds;
-    }
-    
-    
-    CGFloat duration = _showAnimation ? 0.2 : 0;
-    [UIView animateWithDuration:duration animations:^{
-        
-        _containerView.center = self.contentView.center;
-        
-    } completion:^(BOOL finished) {
-        
-        _isGif ? [self loadGif:_gifView] : [self loadImage:_imageView];
-    }];
-    
-}
-
-//Load image
-- (void)loadImage:(UIImageView *)imageView {
-
-    _downloadFinished = NO;
-    
-    _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
-    _progressView.process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
-    [self setValue:[self.url absoluteString] forKey:@"reuseIdentifier"];
-    
-    //sdwebImage default Indicator
-    //[_imageView sd_setShowActivityIndicatorView:YES];
-    //[_imageView sd_setIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    [imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed|SDWebImageLowPriority progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-        
-        //download from internet
-        
-        //the location of imageView here may be changed after another picture download finished
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            //reset the location of the imageView
-            imageView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
-            
-            CGFloat process = (float)receivedSize/expectedSize;
-            _progressView.process = process;
-
-            _showAnimation = YES;
-            
-            //save the processValue of the current url
-            objc_setAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey, [NSNumber numberWithFloat:process], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            
-        });
-        
-    } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-        
-        //load from cache
-        [self setValue:reuseID forKey:@"reuseIdentifier"];
-        [_progressView hideProgressView];
-        
-        CGSize imageSize = imageView.image.size;
-        
-        CGFloat imageScale = imageSize.width/imageSize.height;
-        
-        CGFloat width = imageSize.width > KScreenWidth ? KScreenWidth : imageSize.width;
-        
-        CGFloat height = width/imageScale;
-        
-        CGFloat x = width < KScreenWidth ? (KScreenWidth-width)*0.5 : 0;
-        CGFloat y = height < KScreenHeight ? (KScreenHeight-height)*0.5 : 0;
-        
-        CGFloat duration = _showAnimation ? 0.2 : 0;
-        [UIView animateWithDuration:duration animations:^{
-            
-            if (!_isPan) {
-                
-                _containerView.frame = CGRectMake(x, y, width, height);
-                imageView.frame = _containerView.bounds;
-            }
-        }];
-        
-        _finalFrame = CGRectMake(x, y, width, height);
-        _scrollView.contentSize = CGSizeMake(width, height);
-        _downloadFinished = YES;
-    }];
-}
 
 #pragma mark - Gif
-- (void)loadGif:(FLAnimatedImageView *)gifView {
-
-    [self loadImage:gifView];
-}
-
 //pause
 -(void)pauseGif
 {
@@ -472,8 +369,14 @@ static NSString *reuseID = @"photoBrowser";
 
     _srcImageView.hidden = _hideSrcImageView;
     
-    if (_isGif) {
-        [self playGif];
+    [self configInitialLocation];
+    
+    if (!_downloadFinished) {
+        
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(refreshProcess)];
+        _displayLink.preferredFramesPerSecond = 6;
+        _displayLink.paused = NO;
+        [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     }
 }
 
@@ -482,13 +385,114 @@ static NSString *reuseID = @"photoBrowser";
     _srcImageView.hidden = !_hideSrcImageView;
     
     if (_isGif) {
+        
         [self pauseGif];
+    }
+    
+    if (!_downloadFinished) {
+        
+        _displayLink.paused = YES;
+        [_displayLink invalidate];
+        _displayLink = nil;
     }
     
 }
 
-- (void)prepareForReuse {
+#pragma mark - Image/Gif handle
+//config the initial location while Cell will display
+- (void)configInitialLocation {
 
-    NSLog(@"reuse");
+    _imageView.hidden = _isGif;
+    _gifView.hidden = !_isGif;
+    
+    UIImageView *imgOrGifView = _isGif ? _gifView : _imageView;
+    
+    _containerView.frame = _srcImageView.frame;
+    //placeholder image
+    imgOrGifView.image = _srcImageView.image;
+    //get thumbnail-imageView's frame
+    imgOrGifView.frame = _containerView.bounds;
+    
+    CGFloat duration = _showAnimation ? 0.2 : 0;
+    [UIView animateWithDuration:duration animations:^{
+        
+        _containerView.center = self.contentView.center;
+        
+    } completion:^(BOOL finished) {
+        
+        [self loadImage:imgOrGifView];
+    }];
 }
+
+//Load image
+- (void)loadImage:(UIImageView *)imgOrGifView {
+    
+    _downloadFinished = NO;
+    
+    //ProgressView
+    _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
+    CGFloat process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
+    _progressView.process = process;//show current process
+    
+    if (process < 1) {
+        //downloading
+        imgOrGifView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
+        
+        _downloadFinished = NO;
+        
+    } else {
+        //download finished
+        _displayLink.paused = YES;
+        [_displayLink invalidate];
+        _displayLink = nil;
+        
+        [_progressView hideProgressView];
+        
+        [imgOrGifView sd_setImageWithURL:_url completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+            
+            //load image/gif from cache
+            CGSize imageSize = imgOrGifView.image.size;
+            
+            CGFloat imageScale = imageSize.width/imageSize.height;
+            
+            CGFloat width = imageSize.width > KScreenWidth ? KScreenWidth : imageSize.width;
+            
+            CGFloat height = width/imageScale;
+            
+            CGFloat x = width < KScreenWidth ? (KScreenWidth-width)*0.5 : 0;
+            CGFloat y = height < KScreenHeight ? (KScreenHeight-height)*0.5 : 0;
+            
+            CGFloat duration = _showAnimation ? 0.2 : 0;
+            [UIView animateWithDuration:duration animations:^{
+                
+                if (!_isPan) {
+                    
+                    _containerView.frame = CGRectMake(x, y, width, height);
+                    imgOrGifView.frame = _containerView.bounds;
+                }
+            }];
+            
+            _finalFrame = CGRectMake(x, y, width, height);
+            _scrollView.contentSize = CGSizeMake(width, height);
+            _downloadFinished = YES;
+            
+            if (_isGif) {
+                [self playGif];
+            }
+        }];
+    }
+}
+
+//Refresh process-value
+- (void)refreshProcess {
+    
+    _progressView.process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
+    
+    if ([objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue] >= 1) {
+        //download finished
+        
+        _isGif ? [self loadImage:_gifView] : [self loadImage:_imageView];
+    }
+}
+
 @end

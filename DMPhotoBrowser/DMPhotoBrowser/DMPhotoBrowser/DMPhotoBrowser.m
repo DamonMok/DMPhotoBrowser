@@ -10,6 +10,7 @@
 #import "UIView+layout.h"
 #import "DMPhotoCell.h"
 #import <objc/runtime.h>
+#import <SDWebImageManager.h>
 
 static NSString *reuseID = @"photoBrowser";
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
@@ -39,10 +40,29 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_index inSection:0];
     [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
     
-    for (id imageView in imageViews) {
+    for (UIImageView *srcImgView in _arrSrcImageView) {
         
-        objc_setAssociatedObject(imageView, DMPhotoCellProcessValueKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(srcImgView, DMPhotoCellProcessValueKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
+    
+    //Download
+    //The download is asynchronous and cached.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        for (int i = 0; i < _arrUrl.count; i++) {
+            
+            [[SDWebImageManager sharedManager] loadImageWithURL:_arrUrl[i] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+                
+                //save the process-value
+                objc_setAssociatedObject(_arrSrcImageView[i], DMPhotoCellProcessValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                
+            } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                
+                objc_setAssociatedObject(_arrSrcImageView[i], DMPhotoCellProcessValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            }];
+        }
+        
+    });
 }
 
 
@@ -110,7 +130,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     cell.url = _arrUrl[indexPath.row];
     cell.srcImageView = _arrSrcImageView[indexPath.row];
     cell.delegate = self;
-    NSLog(@"%ld", indexPath.row);
+    
     __weak typeof(self) weakSelf = self;
     cell.DMPhotoCellPanStateChange = ^(CGFloat alpha) {
         
