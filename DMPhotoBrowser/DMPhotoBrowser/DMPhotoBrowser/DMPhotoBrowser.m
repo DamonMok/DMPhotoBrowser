@@ -9,8 +9,10 @@
 #import "DMPhotoBrowser.h"
 #import "UIView+layout.h"
 #import "DMPhotoCell.h"
+#import <objc/runtime.h>
 
 static NSString *reuseID = @"photoBrowser";
+static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 #define margin 10
 
 @interface DMPhotoBrowser ()<UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate, DMPhotoCellDelegate>{
@@ -36,6 +38,11 @@ static NSString *reuseID = @"photoBrowser";
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_index inSection:0];
     [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+    
+    for (id imageView in imageViews) {
+        
+        objc_setAssociatedObject(imageView, DMPhotoCellProcessValueKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
 }
 
 
@@ -97,7 +104,7 @@ static NSString *reuseID = @"photoBrowser";
 }
 
 - (__kindof DMPhotoCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-NSLog(@"%ld", indexPath.row);
+
     DMPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseID forIndexPath:indexPath];
    
     cell.hideSrcImageView = _hideSrcImageView;

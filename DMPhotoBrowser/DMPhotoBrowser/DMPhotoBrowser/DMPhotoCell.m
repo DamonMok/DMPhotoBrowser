@@ -12,6 +12,10 @@
 #import <FLAnimatedImageView+WebCache.h>
 #import "UIView+layout.h"
 #import "DMProgressView.h"
+#import <objc/runtime.h>
+
+static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
+static NSString *reuseID = @"photoBrowser";
 
 @interface DMPhotoCell ()<UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
@@ -22,6 +26,7 @@
     CGRect _panStartFrame;// frame before panGesture
     BOOL _isPan;//UIPanGestureRecognizer is executing
     CGRect _finalFrame;
+
 }
 
 @property (nonatomic, strong)UIScrollView *scrollView;
@@ -171,10 +176,13 @@
     _downloadFinished = NO;
     
     _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
+    _progressView.process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
+    [self setValue:[self.url absoluteString] forKey:@"reuseIdentifier"];
+    
     //sdwebImage default Indicator
     //[_imageView sd_setShowActivityIndicatorView:YES];
     //[_imageView sd_setIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    [imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed|SDWebImageLowPriority progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+    [imageView sd_setImageWithURL:self.url placeholderImage:_srcImageView.image options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         
         //download from internet
         
@@ -185,14 +193,20 @@
             //reset the location of the imageView
             imageView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
             
-            _progressView.process = (float)receivedSize/expectedSize;
+            CGFloat process = (float)receivedSize/expectedSize;
+            _progressView.process = process;
+
             _showAnimation = YES;
+            
+            //save the processValue of the current url
+            objc_setAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey, [NSNumber numberWithFloat:process], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             
         });
         
     } completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         
         //load from cache
+        [self setValue:reuseID forKey:@"reuseIdentifier"];
         [_progressView hideProgressView];
         
         CGSize imageSize = imageView.image.size;
@@ -243,7 +257,7 @@
 #pragma mark - Gesture hanlde
 //singleTap: exit the photoBrowser
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
-    
+//    NSLog(@"%@", self.reuseIdentifier);return;
     _progressView.hidden = YES;
     
     UIImageView *imageView = _isGif ? _gifView : _imageView;
@@ -470,7 +484,11 @@
     if (_isGif) {
         [self pauseGif];
     }
+    
 }
 
+- (void)prepareForReuse {
 
+    NSLog(@"reuse");
+}
 @end

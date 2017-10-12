@@ -64,16 +64,16 @@
     self.labProcess.center = center;
     self.labProcess.text = [NSString stringWithFormat:@"%.0f", self.process*100];
     
-    self.labProcess.hidden = self.process>0?NO:YES;
+//    self.labProcess.hidden = self.process>0?NO:YES;
     
 }
 
 - (void)setProcess:(CGFloat)process {
     
-    _process = process;
+    _process = fabs(process);
     
     //2%预显示
-    _process = _process > 0.02 ? _process : 0.02;
+//    _process = _process > 0.02 ? _process : 0.02;
     
     [self setNeedsDisplay];
     
