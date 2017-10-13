@@ -163,11 +163,11 @@ static NSString *reuseID = @"photoBrowser";
         [self pauseGif];
     }
     
-    if ([self.delegate respondsToSelector:@selector(photoCell:hidePhotoFromLargeImgView:toThumbnailImgView:)]) {
+    if ([self.delegate respondsToSelector:@selector(photoCell:hidePhotoFromLargeImgView:toSrcImgView:)]) {
         
         [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:NO];
         
-        [self.delegate photoCell:self hidePhotoFromLargeImgView:imageView toThumbnailImgView:_srcImageView];
+        [self.delegate photoCell:self hidePhotoFromLargeImgView:imageView toSrcImgView:_srcImageView];
     }
 }
 

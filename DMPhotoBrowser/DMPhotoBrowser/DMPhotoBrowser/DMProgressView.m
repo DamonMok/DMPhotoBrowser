@@ -87,7 +87,8 @@
         
         if ([progressView isKindOfClass:[DMProgressView class]]) {
             
-            [progressView removeFromSuperview];
+            //[progressView removeFromSuperview];
+            return progressView;
         }
     }
     

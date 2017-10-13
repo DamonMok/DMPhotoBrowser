@@ -94,7 +94,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
     if (self = [super init]) {
         
-        self.hideSrcImageView = YES;
+        _hideSrcImageView = YES;
         _showAnimation = YES;
         [self initViews];
     }
@@ -168,7 +168,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 #pragma DMPhotoCell delegate
 //Exit the browser
-- (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toThumbnailImgView:(UIImageView *)srcImgView {
+- (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toSrcImgView:(UIImageView *)srcImgView {
     
     CGPoint endPoint = [cell.contentView convertPoint:CGPointMake(srcImgView.dm_x, srcImgView.dm_y) toView:largeImgView];
     
