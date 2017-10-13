@@ -11,7 +11,7 @@
 @interface DMPhotoBrowser : UIView
 
 /**
- * The index of the image is currently selected
+ * The index of the image is currently selected.
  */
 @property (nonatomic, assign)int index;
 

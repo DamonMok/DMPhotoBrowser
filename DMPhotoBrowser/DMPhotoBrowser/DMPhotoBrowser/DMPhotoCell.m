@@ -21,7 +21,6 @@ static NSString *reuseID = @"photoBrowser";
 
     DMProgressView *_progressView;
     BOOL _isGif;
-    BOOL _downloadFinished;
     CGPoint _panStartPoint;// x/y before panGesture
     CGRect _panStartFrame;// frame before panGesture
     BOOL _isPan;//UIPanGestureRecognizer is executing
@@ -37,6 +36,7 @@ static NSString *reuseID = @"photoBrowser";
 
 @property (nonatomic, strong)FLAnimatedImageView *gifView;
 
+@property (nonatomic, assign)BOOL downloadFinished;
 @property (nonatomic, strong)CADisplayLink *displayLink;
 
 @end
@@ -92,6 +92,11 @@ static NSString *reuseID = @"photoBrowser";
     }
     
     return _gifView;
+}
+
+- (BOOL)downloadFinished {
+
+    return [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue] >= 1 ? YES : NO;
 }
 
 - (void)setUrl:(NSURL *)url {
@@ -174,7 +179,7 @@ static NSString *reuseID = @"photoBrowser";
 //double tap
 - (void)doubleTapHandle:(UITapGestureRecognizer *)tap {
 
-    if (!_downloadFinished) return;
+    if (!self.downloadFinished) return;
     
     CGPoint tapPoint = [tap locationInView:_containerView];
     
@@ -264,7 +269,7 @@ static NSString *reuseID = @"photoBrowser";
             //reset the frame
             [UIView animateWithDuration:0.3 animations:^{
                 
-                _containerView.frame = _downloadFinished?_finalFrame:_panStartFrame;
+                _containerView.frame = self.downloadFinished?_finalFrame:_panStartFrame;
                 if (_isGif) {
                     
                     _gifView.frame = _containerView.bounds;
@@ -278,7 +283,7 @@ static NSString *reuseID = @"photoBrowser";
                     self.DMPhotoCellPanStateChange(1);
                 }
             } completion:^(BOOL finished) {
-                _progressView.hidden = _downloadFinished;
+                _progressView.hidden = self.downloadFinished;
             }];
         }
        
@@ -371,7 +376,7 @@ static NSString *reuseID = @"photoBrowser";
     
     [self configInitialLocation];
     
-    if (!_downloadFinished) {
+    if (!self.downloadFinished) {
         
         _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(refreshProcess)];
         _displayLink.preferredFramesPerSecond = 6;
@@ -389,13 +394,7 @@ static NSString *reuseID = @"photoBrowser";
         [self pauseGif];
     }
     
-    if (!_downloadFinished) {
-        
-        _displayLink.paused = YES;
-        [_displayLink invalidate];
-        _displayLink = nil;
-    }
-    
+    [self removeDisplayLink];
 }
 
 #pragma mark - Image/Gif handle
@@ -427,24 +426,21 @@ static NSString *reuseID = @"photoBrowser";
 //Load image
 - (void)loadImage:(UIImageView *)imgOrGifView {
     
-    _downloadFinished = NO;
-    
-    //ProgressView
-    _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
-    CGFloat process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
-    _progressView.process = process;//show current process
-    
-    if (process < 1) {
+    if (!self.downloadFinished) {
         //downloading
+        
+        //ProgressView
+        _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
+        CGFloat process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
+        _progressView.process = process;//show current process
+        
         imgOrGifView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
         
-        _downloadFinished = NO;
+        _showAnimation = YES;
         
     } else {
         //download finished
-        _displayLink.paused = YES;
-        [_displayLink invalidate];
-        _displayLink = nil;
+        [self removeDisplayLink];
         
         [_progressView hideProgressView];
         
@@ -462,7 +458,7 @@ static NSString *reuseID = @"photoBrowser";
             CGFloat x = width < KScreenWidth ? (KScreenWidth-width)*0.5 : 0;
             CGFloat y = height < KScreenHeight ? (KScreenHeight-height)*0.5 : 0;
             
-            CGFloat duration = _showAnimation ? 0.2 : 0;
+            CGFloat duration = _showAnimation ? 0.25 : 0;
             [UIView animateWithDuration:duration animations:^{
                 
                 if (!_isPan) {
@@ -474,7 +470,6 @@ static NSString *reuseID = @"photoBrowser";
             
             _finalFrame = CGRectMake(x, y, width, height);
             _scrollView.contentSize = CGSizeMake(width, height);
-            _downloadFinished = YES;
             
             if (_isGif) {
                 [self playGif];
@@ -483,15 +478,19 @@ static NSString *reuseID = @"photoBrowser";
     }
 }
 
+#pragma mark - DisplayLink
 //Refresh process-value
 - (void)refreshProcess {
     
-    _progressView.process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
-    
-    if ([objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue] >= 1) {
-        //download finished
-        
-        _isGif ? [self loadImage:_gifView] : [self loadImage:_imageView];
+    _isGif ? [self loadImage:_gifView] : [self loadImage:_imageView];
+}
+
+- (void)removeDisplayLink {
+
+    if (_displayLink) {
+        _displayLink.paused = YES;
+        [_displayLink invalidate];
+        _displayLink = nil;
     }
 }
 
