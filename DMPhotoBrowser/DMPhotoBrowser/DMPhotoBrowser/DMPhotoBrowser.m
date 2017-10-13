@@ -180,6 +180,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     } completion:^(BOOL finished) {
         
         srcImgView.hidden = NO;
+        [[SDImageCache sharedImageCache] clearMemory];
         [self removeFromSuperview];
     }];
 }

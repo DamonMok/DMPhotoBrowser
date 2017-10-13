@@ -261,6 +261,7 @@ static NSString *reuseID = @"photoBrowser";
             } completion:^(BOOL finished) {
                 
                 _srcImageView.hidden = NO;
+                [[SDImageCache sharedImageCache] clearMemory];
                 [(UIView *)_delegate removeFromSuperview];
             }];
             
@@ -388,9 +389,6 @@ static NSString *reuseID = @"photoBrowser";
     if (_isGif) {
         
         [self pauseGif];
-        _gifView.image = nil;
-    } else {
-        _imageView.image = nil;
     }
     
     [self removeDpLink];
