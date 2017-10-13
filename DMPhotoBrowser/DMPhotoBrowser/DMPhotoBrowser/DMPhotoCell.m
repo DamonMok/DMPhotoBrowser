@@ -13,6 +13,7 @@
 #import "UIView+layout.h"
 #import "DMProgressView.h"
 #import <objc/runtime.h>
+#import "FLAnimatedImageView+GifUpgrade.h"
 
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 static NSString *reuseID = @"photoBrowser";
@@ -387,13 +388,16 @@ static NSString *reuseID = @"photoBrowser";
     if (_isGif) {
         
         [self pauseGif];
+        _gifView.image = nil;
+    } else {
+        _imageView.image = nil;
     }
     
     [self removeDpLink];
 }
 
 #pragma mark - Image/Gif handle
-//config the initial location while Cell will display
+//config the initial location before downloading
 - (void)configInitialLocation {
 
     _imageView.hidden = _isGif;
@@ -419,7 +423,7 @@ static NSString *reuseID = @"photoBrowser";
     }];
 }
 
-//Load image
+//set image
 - (void)loadImage:(UIImageView *)imgOrGifView {
     
     CGFloat process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
@@ -443,38 +447,53 @@ static NSString *reuseID = @"photoBrowser";
         
         [_progressView hideProgressView];
         
-        [imgOrGifView sd_setImageWithURL:_url completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+        if (_isGif) {
             
-            //load image/gif from cache
-            CGSize imageSize = imgOrGifView.image.size;
-            
-            CGFloat imageScale = imageSize.width/imageSize.height;
-            
-            CGFloat width = imageSize.width > KScreenWidth ? KScreenWidth : imageSize.width;
-            
-            CGFloat height = width/imageScale;
-            
-            CGFloat x = width < KScreenWidth ? (KScreenWidth-width)*0.5 : 0;
-            CGFloat y = height < KScreenHeight ? (KScreenHeight-height)*0.5 : 0;
-            
-            CGFloat duration = _showAnimation ? 0.25 : 0;
-            [UIView animateWithDuration:duration animations:^{
-                
-                if (!_isPan) {
-                    
-                    _containerView.frame = CGRectMake(x, y, width, height);
-                    imgOrGifView.frame = _containerView.bounds;
-                }
+            [_gifView dm_setImageWithURL:_url options:0 completed:^{
+                //from cache
+                [self configTheLastLocation:_gifView];
             }];
+        } else {
             
-            _finalFrame = CGRectMake(x, y, width, height);
-            _scrollView.contentSize = CGSizeMake(width, height);
-            _downloadFinished = YES;
+            [_imageView sd_setImageWithURL:_url completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                //from cache
+                [self configTheLastLocation:_imageView];
+            }];
+        }
+    }
+}
+
+//config the last location after downloading
+- (void)configTheLastLocation:(UIImageView *)imgOrGifView {
+
+    //load image/gif from cache
+    CGSize imageSize = imgOrGifView.image.size;
+    
+    CGFloat imageScale = imageSize.width/imageSize.height;
+    
+    CGFloat width = imageSize.width > KScreenWidth ? KScreenWidth : imageSize.width;
+    
+    CGFloat height = width/imageScale;
+    
+    CGFloat x = width < KScreenWidth ? (KScreenWidth-width)*0.5 : 0;
+    CGFloat y = height < KScreenHeight ? (KScreenHeight-height)*0.5 : 0;
+    
+    CGFloat duration = _showAnimation ? 0.25 : 0;
+    [UIView animateWithDuration:duration animations:^{
+        
+        if (!_isPan) {
             
-            if (_isGif) {
-                [self playGif];
-            }
-        }];
+            _containerView.frame = CGRectMake(x, y, width, height);
+            imgOrGifView.frame = _containerView.bounds;
+        }
+    }];
+    
+    _finalFrame = CGRectMake(x, y, width, height);
+    _scrollView.contentSize = CGSizeMake(width, height);
+    _downloadFinished = YES;
+    
+    if (_isGif) {
+        [self playGif];
     }
 }
 

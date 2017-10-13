@@ -10,6 +10,7 @@
 #import "UIView+layout.h"
 #import <UIImageView+WebCache.h>
 #import "DMPhotoBrowser.h"
+#import "YYFPSLabel.h"
 
 @interface ViewController ()
 
@@ -116,7 +117,19 @@
 //    photoBrowser.hideSrcImageView = NO;
     
     [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews];
+    
+    [self initFPS];
 }
 
+#pragma mark FPS
+- (void)initFPS {
+    
+    YYFPSLabel *labFPS = [[YYFPSLabel alloc] initWithFrame:CGRectMake(0, 30, 50, 30)];
+    labFPS.dm_centerX = self.view.center.x;
+    [labFPS sizeToFit];
+    
+    UIWindow *window = [UIApplication sharedApplication].delegate.window;
+    [window addSubview:labFPS];
+}
 
 @end
