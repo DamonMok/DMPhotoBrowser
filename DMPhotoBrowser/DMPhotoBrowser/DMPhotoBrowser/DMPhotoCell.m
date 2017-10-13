@@ -195,7 +195,10 @@ static NSString *reuseID = @"photoBrowser";
     //began
     if (pan.state == UIGestureRecognizerStateBegan) {
         
-        _progressView.hidden = YES;
+        if (!_downloadFinished) {
+            _displayLink.paused = YES;
+            _progressView.hidden = YES;
+        }
         
         _panStartPoint = CGPointMake(_containerView.dm_x, _containerView.dm_y);
         
@@ -278,7 +281,11 @@ static NSString *reuseID = @"photoBrowser";
                     self.DMPhotoCellPanStateChange(1);
                 }
             } completion:^(BOOL finished) {
-                _progressView.hidden = _downloadFinished;
+                
+                if (!_downloadFinished) {
+                    _progressView.hidden = NO;
+                    _displayLink.paused = NO;
+                }
             }];
         }
        
