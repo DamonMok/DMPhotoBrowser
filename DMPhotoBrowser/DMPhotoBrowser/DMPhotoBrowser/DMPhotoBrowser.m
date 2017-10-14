@@ -30,6 +30,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 @property (nonatomic, strong)UILabel *labPage;
 
+@property (nonatomic, strong)UIButton *btnSave;
+
 @property (nonatomic, strong)UIPageControl *pageControl;
 
 @end
@@ -269,10 +271,23 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 - (void)addStyleDefault {
 
+    //page label
     [self.labPage sizeToFit];
     _labPage.font = [UIFont systemFontOfSize:14.0];
     _labPage.frame = CGRectMake(kMargin, self.dm_height-CGRectGetHeight(_labPage.frame)-kMargin, _labPage.dm_width, _labPage.dm_height);
+    
+    //save button
+    _btnSave = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_btnSave setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_btnSave setTitle:@"保存" forState:UIControlStateNormal];
+    [_btnSave.titleLabel sizeToFit];
+    _btnSave.titleLabel.font = [UIFont systemFontOfSize:14.0];
+    _btnSave.frame = CGRectMake(self.dm_width-kMargin-_btnSave.titleLabel.dm_width, 0, _btnSave.titleLabel.dm_width, _btnSave.titleLabel.dm_height);
+    _btnSave.dm_centerY = _labPage.dm_centerY;
+    [_btnSave addTarget:self action:@selector(didClickSaveButton) forControlEvents:UIControlEventTouchUpInside];
+    
     [self addSubview:_labPage];
+    [self addSubview:_btnSave];
     
 }
 
@@ -298,6 +313,10 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     [self addSubview:_labPage];
 }
 
+- (void)didClickSaveButton {
+
+    NSLog(@"save");
+}
 
 - (void)dealloc {
 
