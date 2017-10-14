@@ -15,7 +15,7 @@ typedef NS_OPTIONS(NSUInteger, DMPhotoBrowserOptions) {
      */
     DMPhotoBrowserShowSrcImgView = 1 << 0,
     
-    DMPhotoBrowser2 = 1 << 1,
+    DMPhotoBrowserShowPageControl = 1 << 1,
     DMPhotoBrowser3 = 1 << 2
 };
 

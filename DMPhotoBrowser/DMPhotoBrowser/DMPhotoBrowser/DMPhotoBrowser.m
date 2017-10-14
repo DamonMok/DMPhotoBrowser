@@ -26,6 +26,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 @property (nonatomic, strong)UICollectionView *collectionView;
 
+@property (nonatomic, strong)UIPageControl *pageControl;
+
 @end
 
 @implementation DMPhotoBrowser
@@ -121,10 +123,6 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     [self addSubview:self.collectionView];
 }
 
-- (void)configOptions:(DMPhotoBrowserOptions)options {
-
-    _hideSrcImageView = !(options & DMPhotoBrowserShowSrcImgView);
-}
 
 #pragma mark - UICollectionView datasource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -182,6 +180,17 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
 
     [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellDidEndScrollingNotifiation object:nil];
+    
+    
+}
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+
+    //pageControl
+    if (_pageControl) {
+        
+        NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:CGPointMake(_collectionView.contentOffset.x+margin, 0)];
+        _pageControl.currentPage = currentIndexPath.row;
+    }
 }
 
 
@@ -203,6 +212,35 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         [self removeFromSuperview];
     }];
 }
+
+#pragma mark - options
+- (void)configOptions:(DMPhotoBrowserOptions)options {
+    
+    _hideSrcImageView = !(options & DMPhotoBrowserShowSrcImgView);
+    
+    if (options & DMPhotoBrowserShowPageControl)
+        [self addPageControl];
+    
+}
+
+- (void)addPageControl {
+
+    _pageControl = [[UIPageControl alloc] init];
+    _pageControl.numberOfPages = _arrUrl.count;
+    _pageControl.currentPage = _index;
+    
+    CGSize size = [_pageControl sizeForNumberOfPages:_arrUrl.count];
+    _pageControl.frame = CGRectMake(0, self.dm_height-size.height, size.width, size.height);
+    _pageControl.dm_centerX = self.dm_centerX;
+    
+    _pageControl.userInteractionEnabled = NO;
+    [self addSubview:_pageControl];
+}
+
+
+
+
+
 
 - (void)dealloc {
 
