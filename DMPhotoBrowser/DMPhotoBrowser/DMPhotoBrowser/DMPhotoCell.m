@@ -16,17 +16,24 @@
 #import "FLAnimatedImageView+GifUpgrade.h"
 
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
-static NSString *reuseID = @"photoBrowser";
+
+NSString *const DMPhotoCellWillBeginScrollingNotifiation = @"DMPhotoCellWillScrollNotifiation";
+
+NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrollingNotifiation";
 
 @interface DMPhotoCell ()<UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
     BOOL _downloadFinished;
-    DMProgressView *_progressView;
     BOOL _isGif;
+    BOOL _isDisplaying;//cell is displaying
+    BOOL _isPan;//UIPanGestureRecognizer is executing
+    
     CGPoint _panStartPoint;// x/y before panGesture
     CGRect _panStartFrame;// frame before panGesture
-    BOOL _isPan;//UIPanGestureRecognizer is executing
-    CGRect _finalFrame;
+    CGRect _finalFrame;//frame after downloading
+    
+    DMProgressView *_progressView;
+    
     
 }
 
@@ -113,6 +120,12 @@ static NSString *reuseID = @"photoBrowser";
     return self;
 }
 
+- (void)dealloc {
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DMPhotoCellWillBeginScrollingNotifiation object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DMPhotoCellDidEndScrollingNotifiation object:nil];
+}
+
 - (void)initViews {
     
     //subViews
@@ -136,6 +149,11 @@ static NSString *reuseID = @"photoBrowser";
     [self.contentView addGestureRecognizer:doubleTap];
     [self.contentView addGestureRecognizer:singleTap];
     [self.contentView addGestureRecognizer:pan];
+    
+    //Notification
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willScrollCell) name:DMPhotoCellWillBeginScrollingNotifiation object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEndScrollingCell) name:DMPhotoCellDidEndScrollingNotifiation object:nil];
 }
 
 
@@ -155,7 +173,7 @@ static NSString *reuseID = @"photoBrowser";
 #pragma mark - Gesture hanlde
 //singleTap: exit the photoBrowser
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
-//    NSLog(@"%@", self.reuseIdentifier);return;
+
     _progressView.hidden = YES;
     
     UIImageView *imageView = _isGif ? _gifView : _imageView;
@@ -377,14 +395,16 @@ static NSString *reuseID = @"photoBrowser";
 - (void)willDisplayCell {
 
     _srcImageView.hidden = _hideSrcImageView;
+    _isDisplaying = YES;
     
     [self configInitialLocation];
-    
+
 }
 
 - (void)didEndDisplayingCell {
 
     _srcImageView.hidden = !_hideSrcImageView;
+    _isDisplaying = NO;
     
     if (_isGif) {
         
@@ -394,10 +414,24 @@ static NSString *reuseID = @"photoBrowser";
     [self removeDpLink];
 }
 
+- (void)willScrollCell {
+
+    if (_isGif && _isDisplaying) {
+        [self pauseGif];
+    }
+}
+
+- (void)didEndScrollingCell {
+
+    if (_isGif && _isDisplaying) {
+        [self playGif];
+    }
+}
+
 #pragma mark - Image/Gif handle
 //config the initial location before downloading
 - (void)configInitialLocation {
-
+_isGif = [[_url absoluteString] hasSuffix:@"gif"];
     _imageView.hidden = _isGif;
     _gifView.hidden = !_isGif;
     
@@ -442,7 +476,6 @@ static NSString *reuseID = @"photoBrowser";
     } else {
         //download finished
         [self removeDpLink];
-        
         [_progressView hideProgressView];
         
         if (_isGif) {
@@ -500,6 +533,7 @@ static NSString *reuseID = @"photoBrowser";
 - (void)refreshProcess {
     
     _isGif ? [self loadImage:_gifView] : [self loadImage:_imageView];
+    
 }
 
 - (void)addDpLink {

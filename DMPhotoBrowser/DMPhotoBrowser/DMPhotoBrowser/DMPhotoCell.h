@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSString *const DMPhotoCellWillBeginScrollingNotifiation;
+extern NSString *const DMPhotoCellDidEndScrollingNotifiation;
+
 @protocol DMPhotoCellDelegate;
 
 @interface DMPhotoCell : UICollectionViewCell

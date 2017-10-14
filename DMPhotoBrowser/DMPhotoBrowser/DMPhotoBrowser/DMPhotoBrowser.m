@@ -164,7 +164,16 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     
     _showAnimation = NO;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellWillBeginScrollingNotifiation object:nil];
+    
 }
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellDidEndScrollingNotifiation object:nil];
+}
+
 
 #pragma DMPhotoCell delegate
 //Exit the browser
