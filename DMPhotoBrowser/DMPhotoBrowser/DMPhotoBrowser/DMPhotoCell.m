@@ -357,7 +357,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         UIPanGestureRecognizer *pan = (UIPanGestureRecognizer *)gestureRecognizer;
         CGPoint point = [pan translationInView:pan.view];
         
-        if (fabs(point.y) - fabs(point.x) > 3) {
+        if (fabs(point.y) - fabs(point.x) > 3 && pan.numberOfTouches == 1) {
             
             if (_scrollView.contentSize.height<=KScreenHeight) {
                 //response

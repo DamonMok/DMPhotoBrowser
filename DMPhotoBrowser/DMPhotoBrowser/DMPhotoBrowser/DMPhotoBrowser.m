@@ -11,6 +11,8 @@
 #import "DMPhotoCell.h"
 #import <objc/runtime.h>
 #import <SDWebImageManager.h>
+#import <SDImageCache.h>
+#import <Photos/Photos.h>
 
 static NSString *reuseID = @"photoBrowser";
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
@@ -24,6 +26,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     BOOL _hideSrcImageView;
     BOOL _showAnimation;
     DMPhotoBrowserOptions _options;
+
 }
 
 @property (nonatomic, strong)UICollectionView *collectionView;
@@ -135,7 +138,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
     //Self
     self.frame = [UIApplication sharedApplication].keyWindow.bounds;
-    [[UIApplication sharedApplication].keyWindow addSubview:self];
+    [[UIApplication sharedApplication].delegate.window addSubview:self];
     
     //Collection
     self.collectionView.backgroundColor = [UIColor blackColor];
@@ -196,22 +199,22 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 
     //update the index of current Page
-    NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:[self convertPoint:CGPointMake(self.dm_width*0.5, self.dm_height*0.5) toView:_collectionView]];
+    int currentIndex = [self getCurrentIndex];
     
-    if (!currentIndexPath) return;
+    if (currentIndex == -1) return;
     
     if (!(_options & DMPhotoBrowserStylePageControl) && !(_options & DMPhotoBrowserStyleTop)) {
         //Default style
-        _labPage.text = [NSString stringWithFormat:@"%d/%ld",(int)currentIndexPath.row+1, _arrUrl.count];
+        _labPage.text = [NSString stringWithFormat:@"%d/%ld",currentIndex+1, _arrUrl.count];
         [_labPage sizeToFit];
         
     } else if (_options & DMPhotoBrowserStylePageControl) {
         //PageControl style
-        _pageControl.currentPage = currentIndexPath.row;
+        _pageControl.currentPage = currentIndex+1;
         
     } else {
         //Top style
-        _labPage.text = [NSString stringWithFormat:@"%d/%ld",(int)currentIndexPath.row+1, _arrUrl.count];
+        _labPage.text = [NSString stringWithFormat:@"%d/%ld",currentIndex+1, _arrUrl.count];
         [_labPage sizeToFit];
     }
 }
@@ -331,12 +334,68 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 - (void)didClickSaveButton {
 
-    NSLog(@"save");
+//    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+//    
+//    if (status == PHAuthorizationStatusAuthorized) {
+//        NSLog(@"授权");
+//    } else {
+//    
+//        NSLog(@"无权限");
+//    }
+//    return;
+    NSURL *currentImageUrl = _arrUrl[[self getCurrentIndex]];
+    
+    UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromCacheForKey:currentImageUrl.absoluteString];
+    
+    if (cacheImage) {
+        //download finished
+        UIImageWriteToSavedPhotosAlbum(cacheImage, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
+        
+    } else {
+        //show downloading message
+    }
 }
 
 - (void)didClickMoreButton {
 
-    NSLog(@"save");
+    NSLog(@"more");
+}
+
+//
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
+{
+    
+    if (error) {
+        //show the localized recovery suggestion
+        NSString *appName = [NSBundle mainBundle].infoDictionary[@"CFBundleDisplayName"];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:[NSString stringWithFormat:@"保存失败，由于系统限制，请在“设置-隐私-照片”中，重新允许%@访问相册",appName] preferredStyle:UIAlertControllerStyleAlert];
+        
+        id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+        if([rootViewController isKindOfClass:[UINavigationController class]])
+        {
+            rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
+        }
+        if([rootViewController isKindOfClass:[UITabBarController class]])
+        {
+            rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
+        }
+        [rootViewController presentViewController:alertController animated:YES completion:nil];
+        
+    } else {
+        
+        
+    }
+}
+
+- (int)getCurrentIndex {
+
+    NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:[self convertPoint:CGPointMake(self.dm_width*0.5, self.dm_height*0.5) toView:_collectionView]];
+    
+    if (!currentIndexPath) {
+        return -1;
+    }
+    
+    return (int)currentIndexPath.row;
 }
 
 - (void)dealloc {
