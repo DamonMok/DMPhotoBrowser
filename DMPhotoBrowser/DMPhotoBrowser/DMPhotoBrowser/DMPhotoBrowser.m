@@ -14,17 +14,21 @@
 
 static NSString *reuseID = @"photoBrowser";
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
-#define margin 10
+#define kMargin 10
+#define kLabPageHeight 20
 
 @interface DMPhotoBrowser ()<UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate, DMPhotoCellDelegate>{
 
     NSArray *_arrUrl;
     NSArray *_arrSrcImageView;
-    BOOL _showAnimation;
     BOOL _hideSrcImageView;
+    BOOL _showAnimation;
+    DMPhotoBrowserOptions _options;
 }
 
 @property (nonatomic, strong)UICollectionView *collectionView;
+
+@property (nonatomic, strong)UILabel *labPage;
 
 @property (nonatomic, strong)UIPageControl *pageControl;
 
@@ -42,6 +46,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     
     _arrUrl = [NSArray arrayWithArray:urls];
     _arrSrcImageView = [NSArray arrayWithArray:imageViews];
+    _options = options;
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_index inSection:0];
     [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
@@ -82,7 +87,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
         flowLayout.itemSize = CGSizeMake(KScreenWidth, KScreenHeight);
         flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        flowLayout.sectionInset = UIEdgeInsetsMake(0, margin, 0, 0);
+        flowLayout.sectionInset = UIEdgeInsetsMake(0, kMargin, 0, 0);
         
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
         _collectionView.showsVerticalScrollIndicator = NO;
@@ -111,16 +116,18 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 - (void)initViews {
 
-    //self
+    //Self
     self.frame = [UIApplication sharedApplication].keyWindow.bounds;
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     
-    //collection
+    //Collection
     self.collectionView.backgroundColor = [UIColor blackColor];
     self.collectionView.frame = self.bounds;
-    self.collectionView.dm_x -= margin;
-    self.collectionView.dm_width += margin;
+    self.collectionView.dm_x -= kMargin;
+    self.collectionView.dm_width += kMargin;
     [self addSubview:self.collectionView];
+    
+    //Default tool view
 }
 
 
@@ -174,23 +181,29 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     _showAnimation = NO;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellWillBeginScrollingNotifiation object:nil];
-    
 }
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 
     [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellDidEndScrollingNotifiation object:nil];
     
+    //update the index of current Page
+    NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:CGPointMake(_collectionView.contentOffset.x+kMargin, 0)];
     
-}
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-
-    //pageControl
-    if (_pageControl) {
+    if (!(_options & DMPhotoBrowserStylePageControl) && !(_options & DMPhotoBrowserStyleTop)) {
+        //Default style
+        _labPage.text = [NSString stringWithFormat:@"%d/%ld",(int)currentIndexPath.row+1, _arrUrl.count];
+        [_labPage sizeToFit];
         
-        NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:CGPointMake(_collectionView.contentOffset.x+margin, 0)];
+    } else if (_options & DMPhotoBrowserStylePageControl) {
+        //PageControl style
         _pageControl.currentPage = currentIndexPath.row;
+        
+    } else {
+        //Top style
+        
     }
+    
 }
 
 
@@ -218,12 +231,38 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     
     _hideSrcImageView = !(options & DMPhotoBrowserShowSrcImgView);
     
-    if (options & DMPhotoBrowserShowPageControl)
-        [self addPageControl];
+    if (!(options & DMPhotoBrowserStylePageControl) && !(options & DMPhotoBrowserStyleTop)) {
+        
+        //Default style
+        [self addStyleDefault];
+        
+    } else if (options & DMPhotoBrowserStylePageControl) {
+        
+        //PageControl style
+        [self addStylePageControl];
+    } else {
+        
+        //Top style
+        
+    }
+        
     
 }
 
-- (void)addPageControl {
+- (void)addStyleDefault {
+
+    _labPage = [[UILabel alloc] init];
+    _labPage.textColor = [UIColor whiteColor];
+    _labPage.font = [UIFont systemFontOfSize:14.0];
+    _labPage.text = [NSString stringWithFormat:@"%d/%ld",_index+1, _arrUrl.count];
+    [_labPage sizeToFit];
+    
+    _labPage.frame = CGRectMake(kMargin, self.dm_height-CGRectGetHeight(_labPage.frame)-kMargin, _labPage.dm_width, _labPage.dm_height);
+    [self addSubview:_labPage];
+    
+}
+
+- (void)addStylePageControl {
 
     _pageControl = [[UIPageControl alloc] init];
     _pageControl.numberOfPages = _arrUrl.count;
@@ -236,8 +275,6 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     _pageControl.userInteractionEnabled = NO;
     [self addSubview:_pageControl];
 }
-
-
 
 
 
