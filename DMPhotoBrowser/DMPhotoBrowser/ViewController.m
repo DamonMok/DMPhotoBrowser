@@ -115,7 +115,7 @@
     DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];
     photoBrowser.index = (int)tap.view.tag;
     
-    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews options:DMPhotoBrowserStyleTop];
+    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews options:0];
     
     [self initFPS];
 }
@@ -124,7 +124,7 @@
 - (void)initFPS {
     
     YYFPSLabel *labFPS = [[YYFPSLabel alloc] initWithFrame:CGRectMake(0, 30, 50, 30)];
-    labFPS.dm_centerX = self.view.center.x;
+    labFPS.dm_centerX = self.view.center.x-100;
     [labFPS sizeToFit];
     
     UIWindow *window = [UIApplication sharedApplication].delegate.window;

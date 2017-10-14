@@ -102,6 +102,18 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     return _collectionView;
 }
 
+- (UILabel *)labPage {
+
+    if (!_labPage) {
+        
+        _labPage = [[UILabel alloc] init];
+        _labPage.textColor = [UIColor whiteColor];
+        _labPage.text = [NSString stringWithFormat:@"%d/%ld",_index+1, _arrUrl.count];
+    }
+    
+    return _labPage;
+}
+
 #pragma mark - cycle
 - (instancetype)init {
 
@@ -176,19 +188,12 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 
 #pragma mark - UIScrollView delegate
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    
-    _showAnimation = NO;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellWillBeginScrollingNotifiation object:nil];
-}
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellDidEndScrollingNotifiation object:nil];
-    
     //update the index of current Page
-    NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:CGPointMake(_collectionView.contentOffset.x+kMargin, 0)];
+    NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:[self convertPoint:CGPointMake(self.dm_width*0.5, self.dm_height*0.5) toView:_collectionView]];
+    
+    if (!currentIndexPath) return;
     
     if (!(_options & DMPhotoBrowserStylePageControl) && !(_options & DMPhotoBrowserStyleTop)) {
         //Default style
@@ -201,8 +206,21 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         
     } else {
         //Top style
-        
+        _labPage.text = [NSString stringWithFormat:@"%d/%ld",(int)currentIndexPath.row+1, _arrUrl.count];
+        [_labPage sizeToFit];
     }
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    
+    _showAnimation = NO;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellWillBeginScrollingNotifiation object:nil];
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:DMPhotoCellDidEndScrollingNotifiation object:nil];
     
 }
 
@@ -243,7 +261,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     } else {
         
         //Top style
-        
+        [self addStyleTop];
     }
         
     
@@ -251,12 +269,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 - (void)addStyleDefault {
 
-    _labPage = [[UILabel alloc] init];
-    _labPage.textColor = [UIColor whiteColor];
+    [self.labPage sizeToFit];
     _labPage.font = [UIFont systemFontOfSize:14.0];
-    _labPage.text = [NSString stringWithFormat:@"%d/%ld",_index+1, _arrUrl.count];
-    [_labPage sizeToFit];
-    
     _labPage.frame = CGRectMake(kMargin, self.dm_height-CGRectGetHeight(_labPage.frame)-kMargin, _labPage.dm_width, _labPage.dm_height);
     [self addSubview:_labPage];
     
@@ -276,7 +290,13 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     [self addSubview:_pageControl];
 }
 
+- (void)addStyleTop {
 
+    [self.labPage sizeToFit];
+    _labPage.font = [UIFont boldSystemFontOfSize:16.0];
+    _labPage.frame = CGRectMake((self.dm_width-_labPage.dm_width)*0.5, 2*kMargin, _labPage.dm_width, _labPage.dm_height);
+    [self addSubview:_labPage];
+}
 
 
 - (void)dealloc {
