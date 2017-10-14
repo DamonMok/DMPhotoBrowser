@@ -8,6 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_OPTIONS(NSUInteger, DMPhotoBrowserOptions) {
+    /**
+     * By default, when viewing a large image,hide the corresponding source imageView.
+     * Use this flag if you don't want to hide the source imageView.
+     */
+    DMPhotoBrowserShowSrcImgView = 1 << 0,
+    
+    DMPhotoBrowser2 = 1 << 1,
+    DMPhotoBrowser3 = 1 << 2
+};
+
 @interface DMPhotoBrowser : UIView
 
 /**
@@ -15,18 +26,23 @@
  */
 @property (nonatomic, assign)int index;
 
+
 /**
- * By default, when viewing a large image,hide the corresponding thumbnail's imageView.
+ * Show a photo browser.
+ 
+ * @param urls The urls for the large-images.
+ * @param imageViews The imageViews from source imageViews.
  */
-@property (nonatomic, assign)BOOL hideSrcImageView;
+- (void)showWithUrls:(nonnull NSArray<NSURL *> *)urls thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews;
 
 
 /**
  * Show a photo browser.
 
  * @param urls The urls for the large-images.
- * @param imageViews The imageViews from thumbnail imageViews.
+ * @param imageViews The imageViews from source imageViews.
+ * @param options Some configurations about photo browser,get more details in 'DMPhotoBrowserOptions'.
  */
-- (void)showWithUrls:(nonnull NSArray<NSURL *> *)urls thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews;
+- (void)showWithUrls:(nonnull NSArray<NSURL *> *)urls thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews options:(DMPhotoBrowserOptions)options;
 
 @end

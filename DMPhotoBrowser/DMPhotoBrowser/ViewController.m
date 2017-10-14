@@ -114,9 +114,8 @@
     //Browser
     DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];
     photoBrowser.index = (int)tap.view.tag;
-//    photoBrowser.hideSrcImageView = NO;
     
-    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews];
+    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews options:0];
     
     [self initFPS];
 }

@@ -20,9 +20,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
     NSArray *_arrUrl;
     NSArray *_arrSrcImageView;
-    
-    //Show the animation when clicking on the thumbnail-imageView or download finished
     BOOL _showAnimation;
+    BOOL _hideSrcImageView;
 }
 
 @property (nonatomic, strong)UICollectionView *collectionView;
@@ -33,6 +32,11 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 #pragma mark - Show
 - (void)showWithUrls:(NSArray<NSURL *> *)urls thumbnailImageViews:(NSArray<UIImageView *> *)imageViews {
+
+    [self showWithUrls:urls thumbnailImageViews:imageViews options:0];
+}
+
+- (void)showWithUrls:(NSArray<NSURL *> *)urls thumbnailImageViews:(NSArray<UIImageView *> *)imageViews options:(DMPhotoBrowserOptions)options {
     
     _arrUrl = [NSArray arrayWithArray:urls];
     _arrSrcImageView = [NSArray arrayWithArray:imageViews];
@@ -63,6 +67,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         }
         
     });
+    
+    [self configOptions:options];
 }
 
 
@@ -94,7 +100,6 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
     if (self = [super init]) {
         
-        _hideSrcImageView = YES;
         _showAnimation = YES;
         [self initViews];
     }
@@ -114,6 +119,11 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     self.collectionView.dm_x -= margin;
     self.collectionView.dm_width += margin;
     [self addSubview:self.collectionView];
+}
+
+- (void)configOptions:(DMPhotoBrowserOptions)options {
+
+    _hideSrcImageView = !(options & DMPhotoBrowserShowSrcImgView);
 }
 
 #pragma mark - UICollectionView datasource
