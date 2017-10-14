@@ -175,6 +175,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
 
     _progressView.hidden = YES;
+    [self removeDpLink];
     
     UIImageView *imageView = _isGif ? _gifView : _imageView;
     
