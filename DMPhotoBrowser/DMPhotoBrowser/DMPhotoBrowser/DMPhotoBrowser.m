@@ -32,6 +32,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 @property (nonatomic, strong)UIButton *btnSave;
 
+@property (nonatomic, strong)UIButton *btnMore;
+
 @property (nonatomic, strong)UIPageControl *pageControl;
 
 @end
@@ -110,6 +112,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         
         _labPage = [[UILabel alloc] init];
         _labPage.textColor = [UIColor whiteColor];
+        _labPage.textAlignment = NSTextAlignmentCenter;
         _labPage.text = [NSString stringWithFormat:@"%d/%ld",_index+1, _arrUrl.count];
     }
     
@@ -309,11 +312,29 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
     [self.labPage sizeToFit];
     _labPage.font = [UIFont boldSystemFontOfSize:16.0];
-    _labPage.frame = CGRectMake((self.dm_width-_labPage.dm_width)*0.5, 2*kMargin, _labPage.dm_width, _labPage.dm_height);
+    _labPage.frame = CGRectMake((self.dm_width-_labPage.dm_width)*0.5, 2*kMargin, _labPage.dm_width+20, _labPage.dm_height);
+    
+    //save button
+    _btnMore = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_btnMore setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_btnMore setTitle:@"..." forState:UIControlStateNormal];
+    [_btnMore.titleLabel sizeToFit];
+    _btnMore.titleLabel.font = [UIFont boldSystemFontOfSize:22.0];
+    _btnMore.titleLabel.textAlignment = NSTextAlignmentCenter;
+    _btnMore.frame = CGRectMake(self.dm_width-kMargin-_btnMore.titleLabel.dm_width-20, 0, _btnMore.titleLabel.dm_width+20, _btnMore.titleLabel.dm_height+10);
+    _btnMore.dm_centerY = _labPage.dm_centerY-6;
+    [_btnMore addTarget:self action:@selector(didClickMoreButton) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self addSubview:_btnMore];
     [self addSubview:_labPage];
 }
 
 - (void)didClickSaveButton {
+
+    NSLog(@"save");
+}
+
+- (void)didClickMoreButton {
 
     NSLog(@"save");
 }
