@@ -35,6 +35,9 @@ extern NSString *const DMPhotoCellDidEndScrollingNotifiation;
 //This block will be called when UIPanGestureRecognizer ended
 @property (nonatomic, copy)void(^DMPhotoCellPanStateEnd)();
 
+//This block will be called when UILongPressGestureRecognizer
+@property (nonatomic, copy)void(^DMPhotoCellLongPress)();
+
 
 /**The operations befor the cell will display*/
 - (void)willDisplayCell;

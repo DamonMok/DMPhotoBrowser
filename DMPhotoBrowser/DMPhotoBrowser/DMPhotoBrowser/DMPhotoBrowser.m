@@ -180,6 +180,11 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         weakSelf.collectionView.scrollEnabled = YES;
     };
     
+    cell.DMPhotoCellLongPress = ^{
+        
+        [weakSelf didClickMoreButton];
+    };
+    
     return cell;
     
 }

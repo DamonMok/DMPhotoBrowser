@@ -135,20 +135,29 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     [self.containerView addSubview:self.gifView];
     
     //Gesture
+    //single
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapHandle:)];
     
+    //double
     UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapHandle:)];
     doubleTap.numberOfTapsRequired = 2;
     doubleTap.numberOfTouchesRequired = 1;
     [singleTap requireGestureRecognizerToFail:doubleTap];
     
+    //pan
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandle:)];
     pan.delegate = self;
     [pan requireGestureRecognizerToFail:singleTap];
     
+    //long press
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressHandle:)];
+//    longPress.numberOfTouchesRequired = 1;
+//    longPress.numberOfTapsRequired = 1;
+    
     [self.contentView addGestureRecognizer:doubleTap];
     [self.contentView addGestureRecognizer:singleTap];
     [self.contentView addGestureRecognizer:pan];
+    [self.contentView addGestureRecognizer:longPress];
     
     //Notification
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willScrollCell) name:DMPhotoCellWillBeginScrollingNotifiation object:nil];
@@ -315,6 +324,17 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         }
         
         _isPan = NO;
+    }
+}
+
+//long press
+- (void)longPressHandle:(UILongPressGestureRecognizer *)longPress {
+
+    if (longPress.state == UIGestureRecognizerStateBegan) {
+        
+        if (self.DMPhotoCellLongPress) {
+            self.DMPhotoCellLongPress();
+        }
     }
 }
 
