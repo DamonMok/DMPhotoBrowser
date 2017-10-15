@@ -137,7 +137,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 - (void)initViews {
 
     //Self
-    self.frame = [UIApplication sharedApplication].keyWindow.bounds;
+    self.frame = [UIApplication sharedApplication].delegate.window.bounds;
     [[UIApplication sharedApplication].delegate.window addSubview:self];
     
     //Collection
@@ -343,12 +343,13 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 //        NSLog(@"无权限");
 //    }
 //    return;
-    NSURL *currentImageUrl = _arrUrl[[self getCurrentIndex]];
     
+    //Search for cached images
+    NSURL *currentImageUrl = _arrUrl[[self getCurrentIndex]];
     UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromCacheForKey:currentImageUrl.absoluteString];
     
     if (cacheImage) {
-        //download finished
+        //save
         UIImageWriteToSavedPhotosAlbum(cacheImage, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
         
     } else {
@@ -370,18 +371,20 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         NSString *appName = [NSBundle mainBundle].infoDictionary[@"CFBundleDisplayName"];
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:[NSString stringWithFormat:@"保存失败，由于系统限制，请在“设置-隐私-照片”中，重新允许%@访问相册",appName] preferredStyle:UIAlertControllerStyleAlert];
         
-        id rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-        if([rootViewController isKindOfClass:[UINavigationController class]])
-        {
-            rootViewController = ((UINavigationController *)rootViewController).viewControllers.firstObject;
-        }
-        if([rootViewController isKindOfClass:[UITabBarController class]])
-        {
-            rootViewController = ((UITabBarController *)rootViewController).selectedViewController;
-        }
-        [rootViewController presentViewController:alertController animated:YES completion:nil];
+        UIViewController *vc = [[UIViewController alloc] init];
+        __weak typeof(alertController) weakAlertCtler = alertController;
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            
+            [weakAlertCtler dismissViewControllerAnimated:YES completion:nil];
+            [vc.view removeFromSuperview];
+        }];
+        [alertController addAction:action];
+        
+        [[UIApplication sharedApplication].delegate.window addSubview:vc.view];
+        [vc presentViewController:alertController animated:YES completion:nil];
         
     } else {
+        //success
         
         
     }
