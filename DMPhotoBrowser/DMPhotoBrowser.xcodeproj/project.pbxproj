@@ -204,8 +204,6 @@
 		E42578DE1F89ED7100192CE4 /* DMPhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				E42578E11F8A007400192CE4 /* UIView+layout.h */,
-				E42578E21F8A007400192CE4 /* UIView+layout.m */,
 				E42578E61F8A26F600192CE4 /* DMPhotoBrowser.h */,
 				E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */,
 				E42578E91F8A33C800192CE4 /* DMPhotoCell.h */,
@@ -214,6 +212,8 @@
 				E42578ED1F8A808C00192CE4 /* DMProgressView.m */,
 				E42050971F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.h */,
 				E42050981F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m */,
+				E42578E11F8A007400192CE4 /* UIView+layout.h */,
+				E42578E21F8A007400192CE4 /* UIView+layout.m */,
 			);
 			path = DMPhotoBrowser;
 			sourceTree = "<group>";

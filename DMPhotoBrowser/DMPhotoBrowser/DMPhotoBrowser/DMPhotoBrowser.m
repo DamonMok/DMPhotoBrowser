@@ -332,17 +332,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     [self addSubview:_labPage];
 }
 
+#pragma mark - option action
 - (void)didClickSaveButton {
-
-//    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
-//    
-//    if (status == PHAuthorizationStatusAuthorized) {
-//        NSLog(@"授权");
-//    } else {
-//    
-//        NSLog(@"无权限");
-//    }
-//    return;
     
     //Search for cached images
     NSURL *currentImageUrl = _arrUrl[[self getCurrentIndex]];
@@ -354,6 +345,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         
     } else {
         //show downloading message
+        [self showErrorMessage:@"图片正在下载，请稍后再试"];
     }
 }
 
@@ -362,26 +354,13 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     NSLog(@"more");
 }
 
-//
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
     
     if (error) {
         //show the localized recovery suggestion
         NSString *appName = [NSBundle mainBundle].infoDictionary[@"CFBundleDisplayName"];
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:[NSString stringWithFormat:@"保存失败，由于系统限制，请在“设置-隐私-照片”中，重新允许%@访问相册",appName] preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIViewController *vc = [[UIViewController alloc] init];
-        __weak typeof(alertController) weakAlertCtler = alertController;
-        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-            
-            [weakAlertCtler dismissViewControllerAnimated:YES completion:nil];
-            [vc.view removeFromSuperview];
-        }];
-        [alertController addAction:action];
-        
-        [[UIApplication sharedApplication].delegate.window addSubview:vc.view];
-        [vc presentViewController:alertController animated:YES completion:nil];
+        [self showErrorMessage:[NSString stringWithFormat:@"保存失败，由于系统限制，请在“设置-隐私-照片”中，重新允许%@访问相册",appName]];
         
     } else {
         //success
@@ -390,8 +369,25 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     }
 }
 
-- (int)getCurrentIndex {
+- (void)showErrorMessage:(NSString *)message {
 
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIViewController *vc = [[UIViewController alloc] init];
+    __weak typeof(alertController) weakAlertCtler = alertController;
+    UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+        [weakAlertCtler dismissViewControllerAnimated:YES completion:nil];
+        [vc.view removeFromSuperview];
+    }];
+    [alertController addAction:action];
+    
+    [[UIApplication sharedApplication].delegate.window addSubview:vc.view];
+    [vc presentViewController:alertController animated:YES completion:nil];
+}
+
+- (int)getCurrentIndex {
+    
     NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:[self convertPoint:CGPointMake(self.dm_width*0.5, self.dm_height*0.5) toView:_collectionView]];
     
     if (!currentIndexPath) {
