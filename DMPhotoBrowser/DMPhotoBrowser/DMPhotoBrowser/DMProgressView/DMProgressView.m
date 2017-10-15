@@ -80,7 +80,7 @@
 }
 
 #pragma mark - 进度View
-/**【显示】进度View*/
+//【显示】进度View
 + (instancetype)showProgressViewAddedTo:(UIView *)view {
     
     for (DMProgressView *progressView in view.subviews) {
@@ -103,7 +103,7 @@
     return progressView;
 }
 
-/**【隐藏】进度View*/
+//【隐藏】进度View
 - (void)hideProgressView {
     
     [self.labProcess.layer removeFromSuperlayer];
@@ -112,7 +112,7 @@
 }
 
 #pragma mark - 加载View
-/**【显示】loadingView*/
+//【显示】loadingView
 + (instancetype)showLoadingViewAddTo:(UIView *)view {
 
     for (DMProgressView *loadingView in view.subviews) {
@@ -157,13 +157,14 @@
 }
 
 
-/**【隐藏】loadingView*/
+//【隐藏】loadingView
 - (void)hideLoadingView {
 
     [self removeFromSuperview];
 }
 
-
+#pragma mark - 成功提示View
+//【显示
 + (instancetype)showSuccessAddedTo:(UIView *)view message:(NSString *)message {
 
     for (DMProgressView *loadingView in view.subviews) {
@@ -214,8 +215,9 @@
     return progressView;
 }
 
+//【隐藏】成功提示
 - (void)hideSuccessWithView:(UIView *)view {
-
+    
     [UIView transitionWithView:view duration:0.3 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve animations:^{
         
         [self removeFromSuperview];
