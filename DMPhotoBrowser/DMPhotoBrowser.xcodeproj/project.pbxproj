@@ -23,7 +23,9 @@
 		E42578E31F8A007400192CE4 /* UIView+layout.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578E21F8A007400192CE4 /* UIView+layout.m */; };
 		E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */; };
 		E42578EB1F8A33C800192CE4 /* DMPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */; };
-		E42578EE1F8A808C00192CE4 /* DMProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578ED1F8A808C00192CE4 /* DMProgressView.m */; };
+		E426BBE41F9359930040F100 /* ProgressSuccess.png in Resources */ = {isa = PBXBuildFile; fileRef = E426BBE01F9359930040F100 /* ProgressSuccess.png */; };
+		E426BBE51F9359930040F100 /* ProgressSuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = E426BBE11F9359930040F100 /* ProgressSuccess@3x.png */; };
+		E426BBE61F9359930040F100 /* DMProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = E426BBE31F9359930040F100 /* DMProgressView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,8 +78,10 @@
 		E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoBrowser.m; sourceTree = "<group>"; };
 		E42578E91F8A33C800192CE4 /* DMPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPhotoCell.h; sourceTree = "<group>"; };
 		E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoCell.m; sourceTree = "<group>"; };
-		E42578EC1F8A808C00192CE4 /* DMProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProgressView.h; sourceTree = "<group>"; };
-		E42578ED1F8A808C00192CE4 /* DMProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProgressView.m; sourceTree = "<group>"; };
+		E426BBE01F9359930040F100 /* ProgressSuccess.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProgressSuccess.png; sourceTree = "<group>"; };
+		E426BBE11F9359930040F100 /* ProgressSuccess@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ProgressSuccess@3x.png"; sourceTree = "<group>"; };
+		E426BBE21F9359930040F100 /* DMProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProgressView.h; sourceTree = "<group>"; };
+		E426BBE31F9359930040F100 /* DMProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProgressView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,14 +212,32 @@
 				E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */,
 				E42578E91F8A33C800192CE4 /* DMPhotoCell.h */,
 				E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */,
-				E42578EC1F8A808C00192CE4 /* DMProgressView.h */,
-				E42578ED1F8A808C00192CE4 /* DMProgressView.m */,
 				E42050971F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.h */,
 				E42050981F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m */,
 				E42578E11F8A007400192CE4 /* UIView+layout.h */,
 				E42578E21F8A007400192CE4 /* UIView+layout.m */,
+				E426BBDE1F9359930040F100 /* DMProgressView */,
 			);
 			path = DMPhotoBrowser;
+			sourceTree = "<group>";
+		};
+		E426BBDE1F9359930040F100 /* DMProgressView */ = {
+			isa = PBXGroup;
+			children = (
+				E426BBDF1F9359930040F100 /* DMImgSources */,
+				E426BBE21F9359930040F100 /* DMProgressView.h */,
+				E426BBE31F9359930040F100 /* DMProgressView.m */,
+			);
+			path = DMProgressView;
+			sourceTree = "<group>";
+		};
+		E426BBDF1F9359930040F100 /* DMImgSources */ = {
+			isa = PBXGroup;
+			children = (
+				E426BBE01F9359930040F100 /* ProgressSuccess.png */,
+				E426BBE11F9359930040F100 /* ProgressSuccess@3x.png */,
+			);
+			path = DMImgSources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -330,7 +352,9 @@
 			files = (
 				E42578E01F89FF4D00192CE4 /* images.plist in Resources */,
 				E42578BB1F89EAF600192CE4 /* LaunchScreen.storyboard in Resources */,
+				E426BBE51F9359930040F100 /* ProgressSuccess@3x.png in Resources */,
 				E42578B81F89EAF600192CE4 /* Assets.xcassets in Resources */,
+				E426BBE41F9359930040F100 /* ProgressSuccess.png in Resources */,
 				E42578B61F89EAF600192CE4 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,13 +428,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E42578EE1F8A808C00192CE4 /* DMProgressView.m in Sources */,
 				E42578E31F8A007400192CE4 /* UIView+layout.m in Sources */,
 				E420508F1F90E08600E9B0D3 /* YYFPSLabel.m in Sources */,
 				E42578EB1F8A33C800192CE4 /* DMPhotoCell.m in Sources */,
 				E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */,
 				E42050901F90E08600E9B0D3 /* YYWeakProxy.m in Sources */,
 				E42578B31F89EAF600192CE4 /* ViewController.m in Sources */,
+				E426BBE61F9359930040F100 /* DMProgressView.m in Sources */,
 				E42578B01F89EAF600192CE4 /* AppDelegate.m in Sources */,
 				E42050991F90FB6D00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m in Sources */,
 				E42578AD1F89EAF600192CE4 /* main.m in Sources */,

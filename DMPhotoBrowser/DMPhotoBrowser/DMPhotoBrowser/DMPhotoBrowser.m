@@ -13,6 +13,7 @@
 #import <SDWebImageManager.h>
 #import <SDImageCache.h>
 #import <Photos/Photos.h>
+#import "DMProgressView.h"
 
 static NSString *reuseID = @"photoBrowser";
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
@@ -364,8 +365,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         
     } else {
         //success
-        
-        
+        [DMProgressView showSuccessAddedTo:self message:@"保存成功"];
     }
 }
 

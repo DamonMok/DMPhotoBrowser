@@ -64,16 +64,16 @@
     self.labProcess.center = center;
     self.labProcess.text = [NSString stringWithFormat:@"%.0f", self.process*100];
     
-//    self.labProcess.hidden = self.process>0?NO:YES;
+    self.labProcess.hidden = self.process>0?NO:YES;
     
 }
 
 - (void)setProcess:(CGFloat)process {
     
-    _process = fabs(process);
+    _process = process;
     
     //2%预显示
-//    _process = _process > 0.02 ? _process : 0.02;
+    _process = _process > 0.02 ? _process : 0.02;
     
     [self setNeedsDisplay];
     
@@ -115,19 +115,18 @@
 /**【显示】loadingView*/
 + (instancetype)showLoadingViewAddTo:(UIView *)view {
 
-    for (UIView *loadingView in view.subviews) {
+    for (DMProgressView *loadingView in view.subviews) {
         
         if ([loadingView isKindOfClass:[DMProgressView class]]) {
             
-            return nil;
+            return loadingView;
         }
     }
     
     DMProgressView *progressView = [[DMProgressView alloc] init];
-    progressView.backgroundColor = [UIColor grayColor];
+    progressView.backgroundColor = [UIColor colorWithWhite:0.f alpha:0.6];
     progressView.layer.masksToBounds = YES;
     progressView.layer.cornerRadius = 5;
-    progressView.alpha = 0.7;
     progressView.frame = CGRectMake(0, 0, 100, 100);
     progressView.center = CGPointMake(view.bounds.size.width*0.5, view.bounds.size.height*0.5);
     
@@ -135,7 +134,7 @@
     UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectZero];
     progressView.activityIndicatorView = activityIndicatorView;
     activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-    activityIndicatorView.center = CGPointMake(view.bounds.size.width*0.5, view.bounds.size.height*0.5-15);
+    activityIndicatorView.center = CGPointMake(progressView.bounds.size.width*0.5, progressView.bounds.size.height*0.5-15);
     
     [activityIndicatorView startAnimating];
     
@@ -148,11 +147,11 @@
     labLoading.textAlignment = NSTextAlignmentCenter;
     [labLoading sizeToFit];
     labLoading.frame = CGRectMake(0, 0, progressView.bounds.size.width, 30);
-    labLoading.center = CGPointMake(view.bounds.size.width*0.5, view.center.y+30);
+    labLoading.center = CGPointMake(progressView.bounds.size.width*0.5, progressView.bounds.size.height*0.5+30);
     
     [view addSubview:progressView];
-    [view addSubview:activityIndicatorView];
-    [view addSubview:labLoading];
+    [progressView addSubview:activityIndicatorView];
+    [progressView addSubview:labLoading];
     
     return progressView;
 }
@@ -162,8 +161,66 @@
 - (void)hideLoadingView {
 
     [self removeFromSuperview];
-    [self.activityIndicatorView removeFromSuperview];
-    [self.labLoading removeFromSuperview];
+}
+
+
++ (instancetype)showSuccessAddedTo:(UIView *)view message:(NSString *)message {
+
+    for (DMProgressView *loadingView in view.subviews) {
+        
+        if ([loadingView isKindOfClass:[DMProgressView class]]) {
+            
+            return loadingView;
+        }
+    }
+    
+    DMProgressView *progressView = [[DMProgressView alloc] init];
+    progressView.backgroundColor = [UIColor colorWithWhite:0.f alpha:0.6];
+    progressView.layer.masksToBounds = YES;
+    progressView.layer.cornerRadius = 5;
+    progressView.frame = CGRectMake(0, 0, 100, 100);
+    progressView.center = CGPointMake(view.bounds.size.width*0.5, view.bounds.size.height*0.5);
+    
+    //成功图标
+    UIImageView *ivSuccess = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ProgressSuccess"]];
+    ivSuccess.frame = CGRectMake(0, 0, 35, 35);
+    ivSuccess.center = CGPointMake(progressView.bounds.size.width*0.5, progressView.bounds.size.height*0.5-15);
+    
+    //文字
+    UILabel *labLoading = [[UILabel alloc] init];
+    progressView.labLoading = labLoading;
+    labLoading.text = message;
+    labLoading.font = [UIFont systemFontOfSize:14.0];
+    labLoading.textColor = [UIColor whiteColor];
+    labLoading.textAlignment = NSTextAlignmentCenter;
+    [labLoading sizeToFit];
+    labLoading.frame = CGRectMake(0, 0, progressView.bounds.size.width, 30);
+    labLoading.center = CGPointMake(progressView.bounds.size.width*0.5, progressView.bounds.size.height*0.5+30);
+    
+    [progressView addSubview:ivSuccess];
+    [progressView addSubview:labLoading];
+    
+    [UIView transitionWithView:view duration:0.3 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        
+        [view addSubview:progressView];
+    } completion:^(BOOL finished) {
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            //防止和主运行循环进行资源竞争导致的卡顿
+            [progressView performSelector:@selector(hideSuccessWithView:) withObject:view afterDelay:0 inModes:@[NSDefaultRunLoopMode]];
+        });
+    }];
+    
+    return progressView;
+}
+
+- (void)hideSuccessWithView:(UIView *)view {
+
+    [UIView transitionWithView:view duration:0.3 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        
+        [self removeFromSuperview];
+        
+    } completion:nil];
 }
 
 - (void)dealloc {
