@@ -15,8 +15,16 @@ typedef NS_OPTIONS(NSUInteger, DMPhotoBrowserOptions) {
      */
     DMPhotoBrowserShowSrcImgView = 1 << 0,
     
+    /**
+     * Photo browser style:similar to the UIPageControl.
+     * If you do not set this parameter, use the default style
+     */
     DMPhotoBrowserStylePageControl = 1 << 1,
     
+    /**
+     * Photo browser style:layout on top
+     * If you do not set this parameter, use the default style
+     */
     DMPhotoBrowserStyleTop = 1 << 2
 };
 

@@ -212,7 +212,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         
     } else if (_options & DMPhotoBrowserStylePageControl) {
         //PageControl style
-        _pageControl.currentPage = currentIndex+1;
+        _pageControl.currentPage = currentIndex;
         
     } else {
         //Top style
@@ -235,7 +235,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 }
 
 
-#pragma DMPhotoCell delegate
+#pragma mark - DMPhotoCell delegate
 //Exit the browser
 - (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toSrcImgView:(UIImageView *)srcImgView {
     
@@ -254,7 +254,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     }];
 }
 
-#pragma mark - options
+#pragma mark - Style options
 - (void)configOptions:(DMPhotoBrowserOptions)options {
     
     _hideSrcImageView = !(options & DMPhotoBrowserShowSrcImgView);
@@ -334,7 +334,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     [self addSubview:_labPage];
 }
 
-#pragma mark - option action
+#pragma mark - Actions of options
+#pragma mark Save the photo
 - (void)didClickSaveButton {
     
     //Search for cached images
@@ -351,19 +352,31 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     }
 }
 
+#pragma mark did click More button
 - (void)didClickMoreButton {
 
     DMActionSheetView *actionSheetView = [DMActionSheetView showActionSheetAddedToView:self datas:@[@"发送给朋友", @"保存图片", @"赞"]];
 
     actionSheetView.selectedBlock = ^(int tag) {
         
-        if (tag == 1) {
-            //save
-            [self didClickSaveButton];
+        switch (tag) {
+            case 0:
+                NSLog(@"发送给朋友");
+                break;
+            case 1:
+                [self didClickSaveButton];
+                break;
+            case 2:
+                NSLog(@"赞");
+                break;
+                
+            default:
+                break;
         }
     };
 }
 
+//Result of save the photo
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
     
@@ -378,6 +391,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     }
 }
 
+//Show error message
 - (void)showErrorMessage:(NSString *)message {
 
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
@@ -395,6 +409,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     [vc presentViewController:alertController animated:YES completion:nil];
 }
 
+#pragma mark Get current index of photo
 - (int)getCurrentIndex {
     
     NSIndexPath *currentIndexPath = [_collectionView indexPathForItemAtPoint:[self convertPoint:CGPointMake(self.dm_width*0.5, self.dm_height*0.5) toView:_collectionView]];
