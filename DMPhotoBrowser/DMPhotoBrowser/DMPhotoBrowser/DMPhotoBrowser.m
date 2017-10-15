@@ -15,6 +15,8 @@
 #import <Photos/Photos.h>
 #import "DMProgressView.h"
 #import "DMActionSheetView.h"
+#import <Photos/Photos.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
 static NSString *reuseID = @"photoBrowser";
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
@@ -349,7 +351,41 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     
     if (cacheImage) {
         //save
-        UIImageWriteToSavedPhotosAlbum(cacheImage, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
+        
+        [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+            
+            NSString *cacheKey = [[SDWebImageManager sharedManager] cacheKeyForURL:_arrUrl[[self getCurrentIndex]]];
+            NSString *cachePath = [[SDImageCache sharedImageCache] defaultCachePathForKey:cacheKey];
+            NSData *imageData = [NSData dataWithContentsOfFile:cachePath];
+            
+            PHAssetCreationRequest *request = [PHAssetCreationRequest creationRequestForAsset];
+            [(PHAssetCreationRequest *)request addResourceWithType:PHAssetResourceTypePhoto data:imageData options:nil];
+            
+        } completionHandler:^(BOOL success, NSError * _Nullable error) {
+            
+            if (error) {
+                //show the localized recovery suggestion
+                NSString *appName = [NSBundle mainBundle].infoDictionary[@"CFBundleDisplayName"];
+                [self showErrorMessage:[NSString stringWithFormat:@"保存失败，由于系统限制，请在“设置-隐私-照片”中，重新允许%@访问相册",appName]];
+                
+            } else {
+                //success
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [DMProgressView showSuccessAddedTo:self message:@"保存成功"];
+                });
+            }
+        }];
+        
+        //Can't save the Gif photo
+        //UIImageWriteToSavedPhotosAlbum(cacheImage, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
+        
+        //Expired in iOS9 and later
+        //ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        //[library writeImageDataToSavedPhotosAlbum:data metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
+        
+        //}] ;
+        
         
     } else {
         //show downloading message

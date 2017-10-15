@@ -12,7 +12,7 @@
 
 static NSString *reuseId = @"DMActionSheetView";
 
-@interface DMActionSheetView ()<UITableViewDataSource, UITableViewDelegate>
+@interface DMActionSheetView ()<UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong)UITableView *tableView;
 
@@ -69,6 +69,11 @@ static NSString *reuseId = @"DMActionSheetView";
     if (self = [super initWithFrame:frame]) {
         
         self.backgroundColor = [UIColor clearColor];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap)];
+        tap.delegate = self;
+        [self addGestureRecognizer:tap];
+        
     }
     
     return self;
@@ -160,6 +165,41 @@ static NSString *reuseId = @"DMActionSheetView";
             completeHandle();
         }
     }];
+}
+
+#pragma mark - hide
+- (void)didTap {
+
+    [self hideCompleteHandle:nil];
+}
+
+#pragma mark - UIGestureRecognizer delegate
+//- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+//
+//    return YES;
+//}
+
+
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+//
+//    if ([gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]]) {
+//        CGPoint tapPoint = [gestureRecognizer locationInView:gestureRecognizer.view];
+//        if (CGRectContainsPoint(_tableView.frame, tapPoint)) {
+//            
+//            return NO;
+//        }
+//    }
+//    
+//    return YES;
+//}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    
+    // 若点击了tableViewCell，则不截获Touch事件
+    if ([NSStringFromClass([touch.view class]) isEqualToString:@"UITableViewCellContentView"]) {
+        return NO;
+    }
+    return  YES;
 }
 
 - (void)dealloc {
