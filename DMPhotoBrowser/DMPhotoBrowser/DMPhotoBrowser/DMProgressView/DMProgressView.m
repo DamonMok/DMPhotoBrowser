@@ -181,7 +181,7 @@
     progressView.layer.cornerRadius = 5;
     progressView.frame = CGRectMake(0, 0, 100, 100);
     progressView.center = CGPointMake(view.bounds.size.width*0.5, view.bounds.size.height*0.5);
-    progressView.hidden = YES;
+    progressView.alpha = 0;
     
     //成功图标
     UIImageView *ivSuccess = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ProgressSuccess"]];
@@ -205,7 +205,7 @@
     
     [UIView animateKeyframesWithDuration:0.3 delay:0 options:UIViewKeyframeAnimationOptionAllowUserInteraction animations:^{
         
-        progressView.hidden = NO;
+        progressView.alpha = 1;
         
     } completion:^(BOOL finished) {
         
@@ -223,7 +223,7 @@
     
     [UIView animateKeyframesWithDuration:0.3 delay:0 options:UIViewKeyframeAnimationOptionAllowUserInteraction animations:^{
         
-        self.hidden = YES;
+        self.alpha = 0;
     } completion:^(BOOL finished) {
         
         [self removeFromSuperview];
