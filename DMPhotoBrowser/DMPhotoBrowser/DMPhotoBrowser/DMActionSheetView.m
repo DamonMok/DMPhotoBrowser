@@ -52,11 +52,11 @@ static NSString *reuseId = @"DMActionSheetView";
     [self addSubview:self.tableView];
     self.tableView.frame = CGRectMake(0, self.bounds.size.height, self.bounds.size.width, self.tableView.contentSize.height);
     
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateKeyframesWithDuration:0.2 delay:0 options:UIViewKeyframeAnimationOptionAllowUserInteraction animations:^{
         
         self.tableView.frame = CGRectMake(0, self.bounds.size.height-self.tableView.contentSize.height, self.bounds.size.width, self.tableView.contentSize.height);
         self.backgroundColor = [UIColor colorWithWhite:0.f alpha:0.4];
-    }];
+    } completion:nil];
 }
 
 - (instancetype)initWithView:(UIView *)view {
@@ -152,18 +152,18 @@ static NSString *reuseId = @"DMActionSheetView";
 }
 
 - (void)hideCompleteHandle:(void (^)())completeHandle {
-
-    [UIView animateWithDuration:0.2 animations:^{
+    
+    [UIView animateKeyframesWithDuration:0.2 delay:0 options:UIViewKeyframeAnimationOptionAllowUserInteraction animations:^{
         
         self.tableView.frame = CGRectMake(0, self.bounds.size.height, self.bounds.size.width, self.tableView.contentSize.height);
         self.backgroundColor = [UIColor clearColor];
     } completion:^(BOOL finished) {
         
-        [self removeFromSuperview];
-        
         if (completeHandle) {
             completeHandle();
         }
+        
+        [self removeFromSuperview];
     }];
 }
 
@@ -174,28 +174,8 @@ static NSString *reuseId = @"DMActionSheetView";
 }
 
 #pragma mark - UIGestureRecognizer delegate
-//- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-//
-//    return YES;
-//}
-
-
-//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-//
-//    if ([gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]]) {
-//        CGPoint tapPoint = [gestureRecognizer locationInView:gestureRecognizer.view];
-//        if (CGRectContainsPoint(_tableView.frame, tapPoint)) {
-//            
-//            return NO;
-//        }
-//    }
-//    
-//    return YES;
-//}
-
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     
-    // 若点击了tableViewCell，则不截获Touch事件
     if ([NSStringFromClass([touch.view class]) isEqualToString:@"UITableViewCellContentView"]) {
         return NO;
     }
