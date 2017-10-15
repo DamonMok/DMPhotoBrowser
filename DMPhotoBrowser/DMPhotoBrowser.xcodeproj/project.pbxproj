@@ -26,6 +26,7 @@
 		E426BBE41F9359930040F100 /* ProgressSuccess.png in Resources */ = {isa = PBXBuildFile; fileRef = E426BBE01F9359930040F100 /* ProgressSuccess.png */; };
 		E426BBE51F9359930040F100 /* ProgressSuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = E426BBE11F9359930040F100 /* ProgressSuccess@3x.png */; };
 		E426BBE61F9359930040F100 /* DMProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = E426BBE31F9359930040F100 /* DMProgressView.m */; };
+		E426BBE91F9369480040F100 /* DMActionSheetView.m in Sources */ = {isa = PBXBuildFile; fileRef = E426BBE81F9369480040F100 /* DMActionSheetView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +83,8 @@
 		E426BBE11F9359930040F100 /* ProgressSuccess@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ProgressSuccess@3x.png"; sourceTree = "<group>"; };
 		E426BBE21F9359930040F100 /* DMProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProgressView.h; sourceTree = "<group>"; };
 		E426BBE31F9359930040F100 /* DMProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProgressView.m; sourceTree = "<group>"; };
+		E426BBE71F9369480040F100 /* DMActionSheetView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMActionSheetView.h; sourceTree = "<group>"; };
+		E426BBE81F9369480040F100 /* DMActionSheetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMActionSheetView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +219,8 @@
 				E42050981F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m */,
 				E42578E11F8A007400192CE4 /* UIView+layout.h */,
 				E42578E21F8A007400192CE4 /* UIView+layout.m */,
+				E426BBE71F9369480040F100 /* DMActionSheetView.h */,
+				E426BBE81F9369480040F100 /* DMActionSheetView.m */,
 				E426BBDE1F9359930040F100 /* DMProgressView */,
 			);
 			path = DMPhotoBrowser;
@@ -436,6 +441,7 @@
 				E42578B31F89EAF600192CE4 /* ViewController.m in Sources */,
 				E426BBE61F9359930040F100 /* DMProgressView.m in Sources */,
 				E42578B01F89EAF600192CE4 /* AppDelegate.m in Sources */,
+				E426BBE91F9369480040F100 /* DMActionSheetView.m in Sources */,
 				E42050991F90FB6D00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m in Sources */,
 				E42578AD1F89EAF600192CE4 /* main.m in Sources */,
 			);

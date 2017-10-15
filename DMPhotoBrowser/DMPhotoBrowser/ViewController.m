@@ -115,7 +115,7 @@
     DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];
     photoBrowser.index = (int)tap.view.tag;
     
-    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews options:0];
+    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews options:DMPhotoBrowserStyleTop];
     
     [self initFPS];
 }

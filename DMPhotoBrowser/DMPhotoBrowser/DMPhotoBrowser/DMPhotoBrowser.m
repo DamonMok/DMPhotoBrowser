@@ -14,6 +14,7 @@
 #import <SDImageCache.h>
 #import <Photos/Photos.h>
 #import "DMProgressView.h"
+#import "DMActionSheetView.h"
 
 static NSString *reuseID = @"photoBrowser";
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
@@ -352,7 +353,15 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 - (void)didClickMoreButton {
 
-    NSLog(@"more");
+    DMActionSheetView *actionSheetView = [DMActionSheetView showActionSheetAddedToView:self datas:@[@"发送给朋友", @"保存图片", @"赞"]];
+
+    actionSheetView.selectedBlock = ^(int tag) {
+        
+        if (tag == 1) {
+            //save
+            [self didClickSaveButton];
+        }
+    };
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
