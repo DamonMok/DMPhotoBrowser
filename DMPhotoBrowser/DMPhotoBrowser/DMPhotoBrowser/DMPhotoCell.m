@@ -233,7 +233,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         
         if (_scrollView.contentSize.height > _scrollView.dm_height) {
             
-            _panStartPoint = CGPointZero;
+            //_panStartPoint = CGPointZero;
         }
         
         _panStartFrame = _containerView.frame;
@@ -250,7 +250,12 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     _containerView.dm_y = _panStartPoint.y + draggingPoint.y;
     _containerView.dm_width = _panStartFrame.size.width - decreaseValue;
     _containerView.dm_height = _containerView.dm_width/scale;
-    _containerView.dm_centerX = KScreenWidth*0.5 + draggingPoint.x;
+    if (_containerView.dm_width < _scrollView.dm_width) {
+        _containerView.dm_centerX = KScreenWidth*0.5 + draggingPoint.x;
+    } else {
+    
+        _containerView.dm_x += (_panStartFrame.size.width-_containerView.dm_width)*0.5;
+    }
     
     if (_isGif) {
         
@@ -410,6 +415,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     CGFloat offsetY = _scrollView.dm_height > _scrollView.contentSize.height? (_scrollView.dm_height-_scrollView.contentSize.height)*0.5 : 0;
     
     _containerView.center = CGPointMake(_scrollView.contentSize.width*0.5+offsetX, _scrollView.contentSize.height*0.5+offsetY);
+    
+    _finalFrame = _containerView.frame;
 }
 
 #pragma mark - cell's cycle
@@ -417,6 +424,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 
     _srcImageView.hidden = _hideSrcImageView;
     _isDisplaying = YES;
+    _scrollView.zoomScale = 1;
     
     [self configInitialLocation];
 
