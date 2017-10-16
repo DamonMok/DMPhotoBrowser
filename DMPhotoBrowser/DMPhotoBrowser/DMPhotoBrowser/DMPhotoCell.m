@@ -282,7 +282,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
             _progressView.hidden = YES;
             
             [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
-            [UIView animateWithDuration:3 animations:^{
+            [UIView animateWithDuration:0.3 animations:^{
                 
                 _containerView.frame = _srcImageView.frame;
                 
