@@ -151,7 +151,6 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     self.collectionView.dm_width += kMargin;
     [self addSubview:self.collectionView];
     
-    //Default tool view
 }
 
 
@@ -206,7 +205,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 #pragma mark - UIScrollView delegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-
+    
     //update the index of current Page
     int currentIndex = [self getCurrentIndex];
     

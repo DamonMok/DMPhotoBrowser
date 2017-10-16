@@ -282,7 +282,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
             _progressView.hidden = YES;
             
             [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
-            [UIView animateWithDuration:0.3 animations:^{
+            [UIView animateWithDuration:3 animations:^{
                 
                 _containerView.frame = _srcImageView.frame;
                 
@@ -358,7 +358,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         }
     } else {
     
-        //pull down
+//        //pull down
 //        CGPoint downP = [_containerView convertPoint:CGPointZero toView:self.contentView];
 //        
 //        //pull up
@@ -385,6 +385,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         
         UIPanGestureRecognizer *pan = (UIPanGestureRecognizer *)gestureRecognizer;
         CGPoint point = [pan translationInView:pan.view];
+        
         
         if (fabs(point.y) - fabs(point.x) > 3 && pan.numberOfTouches == 1 && (_scrollView.contentSize.height < _scrollView.dm_height)) {
             
