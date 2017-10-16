@@ -108,8 +108,8 @@
         [arrUrl addObject:url];
     }
    
-//    [[SDImageCache sharedImageCache] clearMemory];
-//    [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
+    [[SDImageCache sharedImageCache] clearMemory];
+    [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
     
     //Browser
     DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];

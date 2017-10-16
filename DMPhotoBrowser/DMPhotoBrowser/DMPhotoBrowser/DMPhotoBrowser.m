@@ -71,22 +71,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     
     //Download
     //The download is asynchronous and cached.
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        for (int i = 0; i < _arrUrl.count; i++) {
-            
-            [[SDWebImageManager sharedManager] loadImageWithURL:_arrUrl[i] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-                
-                //save the process-value
-                objc_setAssociatedObject(_arrSrcImageView[i], DMPhotoCellProcessValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-                
-            } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                
-                objc_setAssociatedObject(_arrSrcImageView[i], DMPhotoCellProcessValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            }];
-        }
-        
-    });
+    [self requestPhotoAtIndex:_index];
     
     [self configOptions:options];
 }
@@ -164,6 +149,27 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     [self removeFromSuperview];
 }
 
+- (void)requestPhotoAtIndex:(int)index {
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        CGFloat processValue = [objc_getAssociatedObject(_arrSrcImageView, DMPhotoCellProcessValueKey) doubleValue];
+        if (processValue > 0) return ;
+        
+        [[SDWebImageManager sharedManager] loadImageWithURL:_arrUrl[index] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+            
+            //save the process-value
+            objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProcessValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            
+        } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+            
+            objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProcessValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        }];
+        
+    });
+
+}
+
 #pragma mark - UICollectionView datasource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
 
@@ -225,6 +231,20 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 #pragma mark - UICollectionView delegate
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(DMPhotoCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath.row != 0 && indexPath.row != _arrUrl.count-1) {
+        
+        [self requestPhotoAtIndex:(int)indexPath.row+1];
+        [self requestPhotoAtIndex:(int)indexPath.row-1];
+        
+    } else if (indexPath.row == 0 && _arrUrl.count > 1) {
+    
+        [self requestPhotoAtIndex:(int)indexPath.row+1];
+        
+    } else if (indexPath.row == _arrUrl.count-1 && _arrUrl.count > 1) {
+    
+        [self requestPhotoAtIndex:(int)indexPath.row-1];
+    }
     
     cell.showAnimation = (_index == indexPath.row && _showAnimation) ? YES : NO;
     [cell willDisplayCell];
