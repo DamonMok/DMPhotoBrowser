@@ -33,10 +33,13 @@ extern NSString *const DMPhotoCellDidEndScrollingNotifiation;
 @property (nonatomic, copy)void(^DMPhotoCellPanStateChange)(CGFloat alpha);
 
 //This block will be called when UIPanGestureRecognizer ended
-@property (nonatomic, copy)void(^DMPhotoCellPanStateEnd)();
+@property (nonatomic, copy)void(^DMPhotoCellPanStateEnd)(BOOL hide);
 
 //This block will be called when UILongPressGestureRecognizer
 @property (nonatomic, copy)void(^DMPhotoCellLongPress)();
+
+//This block will be called after single tapped
+@property (nonatomic, copy)void(^DMPhotoCellSingleTap)(UIImageView *imgOrGifImgView);
 
 
 /**The operations befor the cell will display*/
@@ -51,9 +54,5 @@ extern NSString *const DMPhotoCellDidEndScrollingNotifiation;
 @protocol DMPhotoCellDelegate <NSObject>
 
 @optional
-
-
-/**Exit the photo browser*/
-- (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toSrcImgView:(UIImageView *)srcImgView;
 
 @end

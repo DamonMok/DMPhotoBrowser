@@ -23,7 +23,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 #define kMargin 10
 #define kLabPageHeight 20
 
-@interface DMPhotoBrowser ()<UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate, DMPhotoCellDelegate>{
+@interface DMPhotoBrowser ()<UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate>{
 
     NSArray *_arrUrl;
     NSArray *_arrSrcImageView;
@@ -32,6 +32,8 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     DMPhotoBrowserOptions _options;
 
 }
+
+@property (nonatomic, strong)NSArray *arrSrcImageView;
 
 @property (nonatomic, strong)UICollectionView *collectionView;
 
@@ -153,6 +155,14 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     
 }
 
+- (void)hidePhotoBrowser {
+
+    self.collectionView.scrollEnabled = NO;
+    UIImageView *srcImgView = self.arrSrcImageView[[self getCurrentIndex]];
+    srcImgView.hidden = NO;
+    [[SDImageCache sharedImageCache] clearMemory];
+    [self removeFromSuperview];
+}
 
 #pragma mark - UICollectionView datasource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -167,23 +177,46 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     cell.hideSrcImageView = _hideSrcImageView;
     cell.url = _arrUrl[indexPath.row];
     cell.srcImageView = _arrSrcImageView[indexPath.row];
-    cell.delegate = self;
     
     __weak typeof(self) weakSelf = self;
+    __weak typeof(cell) weakCell = cell;
     cell.DMPhotoCellPanStateChange = ^(CGFloat alpha) {
         
         weakSelf.collectionView.backgroundColor = [UIColor colorWithWhite:0.f alpha:alpha];
         weakSelf.collectionView.scrollEnabled = NO;
     };
     
-    cell.DMPhotoCellPanStateEnd = ^{
+    cell.DMPhotoCellPanStateEnd = ^(BOOL hide) {
         
-        weakSelf.collectionView.scrollEnabled = YES;
+        if (hide) {
+            [weakSelf hidePhotoBrowser];
+            
+        } else {
+            
+            weakSelf.collectionView.scrollEnabled = YES;
+        }
     };
     
     cell.DMPhotoCellLongPress = ^{
         
         [weakSelf didClickMoreButton];
+    };
+    
+    cell.DMPhotoCellSingleTap = ^(UIImageView *imgOrGifImgView) {
+        
+        UIImageView *srcImgView = weakSelf.arrSrcImageView[[weakSelf getCurrentIndex]];
+        
+        CGPoint endPoint = [weakCell.contentView convertPoint:CGPointMake(srcImgView.dm_x, srcImgView.dm_y) toView:imgOrGifImgView];
+        
+        [UIView animateWithDuration:0.35 animations:^{
+            
+            imgOrGifImgView.frame = CGRectMake(endPoint.x, endPoint.y, srcImgView.dm_width, srcImgView.dm_height);
+            
+            weakSelf.collectionView.backgroundColor = [UIColor colorWithWhite:0.f alpha:0];
+        } completion:^(BOOL finished) {
+            
+            [weakSelf hidePhotoBrowser];
+        }];
     };
     
     return cell;
@@ -242,7 +275,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
 
 #pragma mark - DMPhotoCell delegate
-//Exit the browser
+//hide the browser
 - (void)photoCell:(DMPhotoCell *)cell hidePhotoFromLargeImgView:(UIImageView *)largeImgView toSrcImgView:(UIImageView *)srcImgView {
     
     CGPoint endPoint = [cell.contentView convertPoint:CGPointMake(srcImgView.dm_x, srcImgView.dm_y) toView:largeImgView];

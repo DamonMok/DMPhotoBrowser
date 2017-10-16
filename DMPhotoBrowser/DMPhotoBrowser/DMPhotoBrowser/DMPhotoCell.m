@@ -180,24 +180,22 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 }
 
 #pragma mark - Gesture hanlde
-//singleTap: exit the photoBrowser
+//singleTap: hide the photoBrowser
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
 
     _progressView.hidden = YES;
     [self removeDpLink];
     
-    UIImageView *imageView = _isGif ? _gifView : _imageView;
+    UIImageView *imgOrGifImgView = _isGif ? _gifView : _imageView;
     
     if (_isGif) {
         [self pauseGif];
     }
     
-    if ([self.delegate respondsToSelector:@selector(photoCell:hidePhotoFromLargeImgView:toSrcImgView:)]) {
-        
-        [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
-        
-        [self.delegate photoCell:self hidePhotoFromLargeImgView:imageView toSrcImgView:_srcImageView];
+    if (self.DMPhotoCellSingleTap) {
+        self.DMPhotoCellSingleTap(imgOrGifImgView);
     }
+    
 }
 
 //double tap
@@ -276,8 +274,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     //end
     if (pan.state == UIGestureRecognizerStateEnded) {
         
-        if ([self shouldExitPhotoBrowser]) {
-            //exit the photoBrowser:large -> thumbnail
+        if ([self shouldHidePhotoBrowser]) {
+            //hide the photoBrowser:large -> thumbnail
             
             _progressView.hidden = YES;
             
@@ -297,9 +295,9 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
                 
             } completion:^(BOOL finished) {
                 
-                _srcImageView.hidden = NO;
-                [[SDImageCache sharedImageCache] clearMemory];
-                [(UIView *)_delegate removeFromSuperview];
+                if (self.DMPhotoCellPanStateEnd) {
+                    self.DMPhotoCellPanStateEnd(YES);
+                }
             }];
             
         } else {
@@ -325,12 +323,14 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
                     _progressView.hidden = NO;
                     _displayLink.paused = NO;
                 }
+                
+                if (self.DMPhotoCellPanStateEnd) {
+                    self.DMPhotoCellPanStateEnd(NO);
+                }
             }];
         }
        
-        if (self.DMPhotoCellPanStateEnd) {
-            self.DMPhotoCellPanStateEnd();
-        }
+        
         
         _isPan = NO;
     }
@@ -347,8 +347,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     }
 }
 
-//Check if you need to exit the photoBrowser
-- (BOOL)shouldExitPhotoBrowser {
+//Check if you need to hide the photoBrowser
+- (BOOL)shouldHidePhotoBrowser {
     
     if (_scrollView.contentSize.height <= _scrollView.dm_height) {
 
