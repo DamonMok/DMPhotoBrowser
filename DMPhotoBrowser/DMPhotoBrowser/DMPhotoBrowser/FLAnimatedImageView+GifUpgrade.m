@@ -21,7 +21,7 @@
 
 - (void)dm_setImageWithURL:(NSURL *)url options:(SDWebImageOptions)options completed:(GifUpgradeFetchDataCompleted)completedBlock {
 
-    __weak typeof(self)weakSelf = self;
+    __weak typeof(self) weakSelf = self;
     [self sd_internalSetImageWithURL:url
                     placeholderImage:nil
                              options:options
@@ -29,8 +29,7 @@
                        setImageBlock:^(UIImage *image, NSData *imageData) {
                            SDImageFormat imageFormat = [NSData sd_imageFormatForImageData:imageData];
                            if (imageFormat == SDImageFormatGIF) {
-                               //weakSelf.animatedImage = [FLAnimatedImage animatedImageWithGIFData:imageData];
-                               //weakSelf.image = nil;
+                               
                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                                    
                                    FLAnimatedImage *animatedImage = [FLAnimatedImage animatedImageWithGIFData:imageData];
@@ -38,13 +37,16 @@
                                    dispatch_async(dispatch_get_main_queue(), ^{
                                        
                                        weakSelf.animatedImage = animatedImage;
-                                       weakSelf.image = nil;
-                                       completedBlock();
+//                                       weakSelf.image = nil;
+                                       
+                                       if (completedBlock) {
+                                           completedBlock();
+                                       }
                                    });
                                });
                            } else {
-                               weakSelf.image = image;
-                               weakSelf.animatedImage = nil;
+//                               weakSelf.image = image;
+//                               weakSelf.animatedImage = nil;
                            }
                        }
                             progress:nil

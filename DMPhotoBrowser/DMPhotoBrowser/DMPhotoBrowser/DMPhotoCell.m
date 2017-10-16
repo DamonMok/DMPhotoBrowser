@@ -102,13 +102,6 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     return _gifView;
 }
 
-- (void)setUrl:(NSURL *)url {
-
-    _url = url;
-    
-    _isGif = [[_url absoluteString] hasSuffix:@"gif"];
-}
-
 #pragma mark - cycle
 - (instancetype)initWithFrame:(CGRect)frame {
 
@@ -427,6 +420,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 #pragma mark - cell's cycle
 - (void)willDisplayCell {
 
+    _isGif = [[_url absoluteString] hasSuffix:@"gif"];
+
     _srcImageView.hidden = _hideSrcImageView;
     _isDisplaying = YES;
     _scrollView.zoomScale = 1;
@@ -465,7 +460,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 #pragma mark - Image/Gif handle
 //config the initial location before downloading
 - (void)configInitialLocation {
-_isGif = [[_url absoluteString] hasSuffix:@"gif"];
+
     _imageView.hidden = _isGif;
     _gifView.hidden = !_isGif;
     
@@ -515,11 +510,12 @@ _isGif = [[_url absoluteString] hasSuffix:@"gif"];
         if (_isGif) {
             
             [_gifView dm_setImageWithURL:_url options:0 completed:^{
+                
                 //from cache
                 [self configTheLastLocation:_gifView];
             }];
         } else {
-            
+
             [_imageView sd_setImageWithURL:_url completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                 //from cache
                 [self configTheLastLocation:_imageView];
