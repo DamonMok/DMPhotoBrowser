@@ -194,7 +194,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     
     if ([self.delegate respondsToSelector:@selector(photoCell:hidePhotoFromLargeImgView:toSrcImgView:)]) {
         
-        [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:NO];
+        [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
         
         [self.delegate photoCell:self hidePhotoFromLargeImgView:imageView toSrcImgView:_srcImageView];
     }
@@ -246,15 +246,18 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     //Update the frame
     CGFloat scale = _containerView.dm_width/_containerView.dm_height;
     CGFloat decreaseValue = _containerView.dm_width > 150 ? fabs(draggingPoint.y)*0.5 : 0;
-    _containerView.dm_x = _panStartPoint.x + draggingPoint.x;
     _containerView.dm_y = _panStartPoint.y + draggingPoint.y;
-    _containerView.dm_width = _panStartFrame.size.width - decreaseValue;
-    _containerView.dm_height = _containerView.dm_width/scale;
-    if (_containerView.dm_width < _scrollView.dm_width) {
-        _containerView.dm_centerX = KScreenWidth*0.5 + draggingPoint.x;
-    } else {
-    
-        _containerView.dm_x += (_panStartFrame.size.width-_containerView.dm_width)*0.5;
+    if (_scrollView.zoomScale == 1) {
+        
+        _containerView.dm_x = _panStartPoint.x + draggingPoint.x;
+        _containerView.dm_width = _panStartFrame.size.width - decreaseValue;
+        _containerView.dm_height = _containerView.dm_width/scale;
+        if (_containerView.dm_width < _scrollView.dm_width) {
+            _containerView.dm_centerX = KScreenWidth*0.5 + draggingPoint.x;
+        } else {
+            
+            _containerView.dm_x += (_panStartFrame.size.width-_containerView.dm_width)*0.5;
+        }
     }
     
     if (_isGif) {
@@ -278,6 +281,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
             
             _progressView.hidden = YES;
             
+            [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
             [UIView animateWithDuration:0.3 animations:^{
                 
                 _containerView.frame = _srcImageView.frame;
@@ -355,15 +359,15 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     } else {
     
         //pull down
-        CGPoint downP = [_containerView convertPoint:CGPointZero toView:self.contentView];
-        
-        //pull up
-        CGPoint upP = [_containerView convertPoint:CGPointMake(0, _containerView.dm_height) toView:self.contentView];
-        
-        if(downP.y>_scrollView.dm_centerY || upP.y < _scrollView.dm_centerY) {
-        
-            return YES;
-        }
+//        CGPoint downP = [_containerView convertPoint:CGPointZero toView:self.contentView];
+//        
+//        //pull up
+//        CGPoint upP = [_containerView convertPoint:CGPointMake(0, _containerView.dm_height) toView:self.contentView];
+//        
+//        if(downP.y>_scrollView.dm_centerY || upP.y < _scrollView.dm_centerY) {
+//        
+//            return YES;
+//        }
     }
     
     return NO;
@@ -382,7 +386,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         UIPanGestureRecognizer *pan = (UIPanGestureRecognizer *)gestureRecognizer;
         CGPoint point = [pan translationInView:pan.view];
         
-        if (fabs(point.y) - fabs(point.x) > 3 && pan.numberOfTouches == 1) {
+        if (fabs(point.y) - fabs(point.x) > 3 && pan.numberOfTouches == 1 && (_scrollView.contentSize.height < _scrollView.dm_height)) {
             
             if (_scrollView.contentSize.height<=KScreenHeight) {
                 //response
