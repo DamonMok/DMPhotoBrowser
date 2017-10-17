@@ -504,16 +504,37 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         
     } else {
         //download finished
-        [self removeDpLink];
+        _displayLink.paused = YES;
         [_progressView hideProgressView];
         
         if (_isGif) {
             
-            [_gifView dm_setImageWithURL:_url options:0 completed:^{
+            [[SDWebImageManager sharedManager] loadImageWithURL:_url options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
                 
-                //from cache
-                [self configTheLastLocation:_gifView];
+                if (!error) {
+                    
+                    if (data) {
+                        [self removeDpLink];
+                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                            
+                            FLAnimatedImage *animatedImage = [FLAnimatedImage animatedImageWithGIFData:data];
+                            
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                
+                                _gifView.animatedImage = animatedImage;
+                                [self configTheLastLocation:_gifView];
+                            });
+                        });
+                    } else {
+                        
+                        _displayLink.paused = NO;
+                    }
+                } else {
+                    
+                    [self removeDpLink];
+                }
             }];
+            
         } else {
 
             [_imageView sd_setImageWithURL:_url completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
@@ -571,7 +592,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     if (!_downloadFinished) {
         
         _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(refreshProcess)];
-        _displayLink.preferredFramesPerSecond = 6;
+        _displayLink.preferredFramesPerSecond = 15;
         _displayLink.paused = NO;
         [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     }

@@ -37,16 +37,12 @@
                                    dispatch_async(dispatch_get_main_queue(), ^{
                                        
                                        weakSelf.animatedImage = animatedImage;
-//                                       weakSelf.image = nil;
                                        
                                        if (completedBlock) {
                                            completedBlock();
                                        }
                                    });
                                });
-                           } else {
-//                               weakSelf.image = image;
-//                               weakSelf.animatedImage = nil;
                            }
                        }
                             progress:nil

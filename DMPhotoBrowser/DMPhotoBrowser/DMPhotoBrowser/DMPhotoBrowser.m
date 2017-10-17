@@ -162,9 +162,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
             objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProcessValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             
         } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-            if (error) {
-                NSLog(@"%@", error);
-            }
+
             objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProcessValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         }];
         

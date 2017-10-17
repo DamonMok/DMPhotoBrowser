@@ -73,7 +73,7 @@
     _process = process;
     
     //2%预显示
-    _process = _process > 0.02 ? _process : 0.02;
+    //_process = _process > 0.02 ? _process : 0.02;
     
     [self setNeedsDisplay];
     
