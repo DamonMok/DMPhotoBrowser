@@ -430,14 +430,15 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 - (void)didEndDisplayingCell {
 
     _srcImageView.hidden = !_hideSrcImageView;
+    //[_progressView hideLoadingView];
+    [_progressView hideProgressView];
     _isDisplaying = NO;
+    [self removeDpLink];
     
     if (_isGif) {
         
         [self pauseGif];
     }
-    
-    [self removeDpLink];
 }
 
 - (void)willScrollCell {
@@ -492,8 +493,9 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         
         //ProgressView
         _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
-        
         _progressView.process = process;//show current process
+        
+        //_progressView = [DMProgressView showLoadingViewAddTo:self.contentView];
         
         imgOrGifView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
         
@@ -504,6 +506,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         //download finished
         _displayLink.paused = YES;
         [_progressView hideProgressView];
+        //[_progressView hideLoadingView];
         
         if (_isGif) {
             
@@ -537,13 +540,12 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 
             [_imageView sd_setImageWithURL:_url placeholderImage:_srcImageView.image completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                 //from cache
-//                if (!error) {
-//                    [self configTheLastLocation:_imageView];
-//                } else {
-//                    
-//                    [self removeDpLink];
-//                }
-                [self configTheLastLocation:_imageView];
+                if (!error) {
+                    [self configTheLastLocation:_imageView];
+                } else {
+                    
+                    [self removeDpLink];
+                }
             }];
         }
     }
