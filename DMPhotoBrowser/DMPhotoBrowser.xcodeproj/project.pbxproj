@@ -10,7 +10,6 @@
 		213E80F8C9E58AB3F6956169 /* libPods-DMPhotoBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C45EAEF2EC66BCD015440D5 /* libPods-DMPhotoBrowser.a */; };
 		E420508F1F90E08600E9B0D3 /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E420508C1F90E08600E9B0D3 /* YYFPSLabel.m */; };
 		E42050901F90E08600E9B0D3 /* YYWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = E420508E1F90E08600E9B0D3 /* YYWeakProxy.m */; };
-		E42050991F90FB6D00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m in Sources */ = {isa = PBXBuildFile; fileRef = E42050981F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m */; };
 		E42578AD1F89EAF600192CE4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578AC1F89EAF600192CE4 /* main.m */; };
 		E42578B01F89EAF600192CE4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578AF1F89EAF600192CE4 /* AppDelegate.m */; };
 		E42578B31F89EAF600192CE4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578B21F89EAF600192CE4 /* ViewController.m */; };
@@ -54,8 +53,6 @@
 		E420508C1F90E08600E9B0D3 /* YYFPSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYFPSLabel.m; sourceTree = "<group>"; };
 		E420508D1F90E08600E9B0D3 /* YYWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYWeakProxy.h; sourceTree = "<group>"; };
 		E420508E1F90E08600E9B0D3 /* YYWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYWeakProxy.m; sourceTree = "<group>"; };
-		E42050971F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLAnimatedImageView+GifUpgrade.h"; sourceTree = "<group>"; };
-		E42050981F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FLAnimatedImageView+GifUpgrade.m"; sourceTree = "<group>"; };
 		E42578A81F89EAF600192CE4 /* DMPhotoBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMPhotoBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E42578AC1F89EAF600192CE4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		E42578AE1F89EAF600192CE4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -215,8 +212,6 @@
 				E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */,
 				E42578E91F8A33C800192CE4 /* DMPhotoCell.h */,
 				E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */,
-				E42050971F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.h */,
-				E42050981F90FB6C00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m */,
 				E42578E11F8A007400192CE4 /* UIView+layout.h */,
 				E42578E21F8A007400192CE4 /* UIView+layout.m */,
 				E426BBE71F9369480040F100 /* DMActionSheetView.h */,
@@ -442,7 +437,6 @@
 				E426BBE61F9359930040F100 /* DMProgressView.m in Sources */,
 				E42578B01F89EAF600192CE4 /* AppDelegate.m in Sources */,
 				E426BBE91F9369480040F100 /* DMActionSheetView.m in Sources */,
-				E42050991F90FB6D00E9B0D3 /* FLAnimatedImageView+GifUpgrade.m in Sources */,
 				E42578AD1F89EAF600192CE4 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

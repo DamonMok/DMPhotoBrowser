@@ -13,7 +13,6 @@
 #import "UIView+layout.h"
 #import "DMProgressView.h"
 #import <objc/runtime.h>
-#import "FLAnimatedImageView+GifUpgrade.h"
 
 static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
@@ -144,8 +143,6 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     
     //long press
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressHandle:)];
-//    longPress.numberOfTouchesRequired = 1;
-//    longPress.numberOfTapsRequired = 1;
     
     [self.contentView addGestureRecognizer:doubleTap];
     [self.contentView addGestureRecognizer:singleTap];
@@ -476,6 +473,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     [UIView animateWithDuration:duration animations:^{
         
         _containerView.center = self.contentView.center;
+        _scrollView.contentSize = _containerView.bounds.size;
         
     } completion:^(BOOL finished) {
         
@@ -510,7 +508,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         if (_isGif) {
             
             [[SDWebImageManager sharedManager] loadImageWithURL:_url options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                
+                //from cache
                 if (!error) {
                     
                     if (data) {
@@ -537,8 +535,14 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
             
         } else {
 
-            [_imageView sd_setImageWithURL:_url completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+            [_imageView sd_setImageWithURL:_url placeholderImage:_srcImageView.image completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                 //from cache
+//                if (!error) {
+//                    [self configTheLastLocation:_imageView];
+//                } else {
+//                    
+//                    [self removeDpLink];
+//                }
                 [self configTheLastLocation:_imageView];
             }];
         }
@@ -550,6 +554,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 
     //load image/gif from cache
     CGSize imageSize = imgOrGifView.image.size;
+    
+    if (imageSize.width == 0 || imageSize.height == 0) return;
     
     CGFloat imageScale = imageSize.width/imageSize.height;
     
