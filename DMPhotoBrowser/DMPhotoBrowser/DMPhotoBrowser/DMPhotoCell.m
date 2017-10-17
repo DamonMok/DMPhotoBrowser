@@ -31,9 +31,6 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     CGRect _panStartFrame;// frame before panGesture
     CGRect _finalFrame;//frame after downloading
     
-    DMProgressView *_progressView;
-    
-    
 }
 
 @property (nonatomic, strong)UIScrollView *scrollView;
@@ -45,6 +42,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 @property (nonatomic, strong)FLAnimatedImageView *gifView;
 
 @property (nonatomic, strong)CADisplayLink *displayLink;
+
+@property (nonatomic, strong)DMProgressView *progressView;
 
 @end
 
@@ -100,6 +99,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     
     return _gifView;
 }
+
 
 #pragma mark - cycle
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -182,6 +182,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         [self pauseGif];
     }
     
+    [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
     if (self.DMPhotoCellSingleTap) {
         self.DMPhotoCellSingleTap(imgOrGifImgView);
     }
@@ -505,7 +506,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     } else {
         //download finished
         _displayLink.paused = YES;
-        [_progressView hideProgressView];
+        [_progressView hideProgressView];_progressView = nil;
         //[_progressView hideLoadingView];
         
         if (_isGif) {

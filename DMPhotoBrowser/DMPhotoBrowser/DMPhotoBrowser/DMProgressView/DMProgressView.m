@@ -108,7 +108,7 @@
     
     [self.labProcess.layer removeFromSuperlayer];
     [self removeFromSuperview];
-
+    
 }
 
 #pragma mark - 加载View

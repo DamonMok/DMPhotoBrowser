@@ -107,7 +107,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         _labPage = [[UILabel alloc] init];
         _labPage.textColor = [UIColor whiteColor];
         _labPage.textAlignment = NSTextAlignmentCenter;
-        _labPage.text = [NSString stringWithFormat:@"%d/%ld",_index+1, _arrUrl.count];
+        _labPage.text = [NSString stringWithFormat:@"%d/%lu",_index+1, _arrUrl.count];
     }
     
     return _labPage;
@@ -268,7 +268,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     
     if (!(_options & DMPhotoBrowserStylePageControl) && !(_options & DMPhotoBrowserStyleTop)) {
         //Default style
-        _labPage.text = [NSString stringWithFormat:@"%d/%ld",currentIndex+1, _arrUrl.count];
+        _labPage.text = [NSString stringWithFormat:@"%d/%lu",currentIndex+1, _arrUrl.count];
         [_labPage sizeToFit];
         
     } else if (_options & DMPhotoBrowserStylePageControl) {
@@ -277,7 +277,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         
     } else {
         //Top style
-        _labPage.text = [NSString stringWithFormat:@"%d/%ld",currentIndex+1, _arrUrl.count];
+        _labPage.text = [NSString stringWithFormat:@"%d/%lu",currentIndex+1, _arrUrl.count];
         [_labPage sizeToFit];
     }
 }

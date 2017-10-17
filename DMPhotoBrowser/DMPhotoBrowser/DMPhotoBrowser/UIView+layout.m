@@ -58,18 +58,6 @@
     self.frame = frame;
 }
 
-- (void)setDm_center:(CGPoint)dm_center {
-
-    CGPoint center = self.center;
-    center = dm_center;
-    self.center = center;
-}
-
-- (CGPoint)dm_center {
-
-    return self.center;
-}
-
 - (CGFloat)dm_centerY {
     
     return self.center.y;

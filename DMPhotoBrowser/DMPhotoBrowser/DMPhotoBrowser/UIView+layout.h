@@ -22,8 +22,6 @@
 
 @property (nonatomic, assign)CGFloat dm_height;
 
-@property (nonatomic, assign)CGPoint dm_center;
-
 @property (nonatomic, assign)CGFloat dm_centerY;
 
 @property (nonatomic, assign)CGFloat dm_centerX;
