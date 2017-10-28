@@ -399,56 +399,69 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 #pragma mark Save the photo
 - (void)didClickSaveButton {
     
-    //Search for cached images
-    NSURL *currentImageUrl = _arrUrl[[self getCurrentIndex]];
-    UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromCacheForKey:currentImageUrl.absoluteString];
-    
-    if (cacheImage) {
-        //save
+    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
         
-        [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+        if (status == PHAuthorizationStatusAuthorized) {
             
-            NSString *cacheKey = [[SDWebImageManager sharedManager] cacheKeyForURL:_arrUrl[[self getCurrentIndex]]];
-            NSString *cachePath = [[SDImageCache sharedImageCache] defaultCachePathForKey:cacheKey];
-            NSData *imageData = [NSData dataWithContentsOfFile:cachePath];
+            //Search for cached images
+            NSURL *currentImageUrl = _arrUrl[[self getCurrentIndex]];
+            UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromCacheForKey:currentImageUrl.absoluteString];
             
-            PHAssetCreationRequest *request = [PHAssetCreationRequest creationRequestForAsset];
-            [(PHAssetCreationRequest *)request addResourceWithType:PHAssetResourceTypePhoto data:imageData options:nil];
-            
-        } completionHandler:^(BOOL success, NSError * _Nullable error) {
-            
-            if (error) {
-                //show the localized recovery suggestion
-                NSString *appName = [NSBundle mainBundle].infoDictionary[@"CFBundleDisplayName"];
-                [self showErrorMessage:[NSString stringWithFormat:@"保存失败，由于系统限制，请在“设置-隐私-照片”中，重新允许%@访问相册",appName]];
+            if (cacheImage) {
+                //save
+                
+                [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+                    
+                    NSString *cacheKey = [[SDWebImageManager sharedManager] cacheKeyForURL:_arrUrl[[self getCurrentIndex]]];
+                    NSString *cachePath = [[SDImageCache sharedImageCache] defaultCachePathForKey:cacheKey];
+                    NSData *imageData = [NSData dataWithContentsOfFile:cachePath];
+                    
+                    PHAssetCreationRequest *request = [PHAssetCreationRequest creationRequestForAsset];
+                    [(PHAssetCreationRequest *)request addResourceWithType:PHAssetResourceTypePhoto data:imageData options:nil];
+                    
+                } completionHandler:^(BOOL success, NSError * _Nullable error) {
+                    
+                    if (!error) {
+                        //success
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            
+                            DMProgressHUD *hud = [DMProgressHUD showProgressHUDAddedTo:self];
+                            hud.mode = DMProgressHUDModeStatus;
+                            hud.statusType = DMProgressHUDStatusTypeSuccess;
+                            hud.label.text = @"保存成功";
+                            [hud dismissAfter:1.0];
+                        });
+                    }
+                }];
+                
+                //Can't save the Gif photo
+                //UIImageWriteToSavedPhotosAlbum(cacheImage, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
+                
+                //Expired in iOS9 and later
+                //ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+                //[library writeImageDataToSavedPhotosAlbum:data metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
+                
+                //}] ;
+                
                 
             } else {
-                //success
+                //show downloading message
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    DMProgressHUD *hud = [DMProgressHUD showProgressHUDAddedTo:self];
-                    hud.mode = DMProgressHUDModeStatus;
-                    hud.statusType = DMProgressHUDStatusTypeSuccess;
-                    hud.label.text = @"保存成功";
-                    [hud dismissAfter:1.0];
+                    [self showErrorMessage:@"图片正在下载，请稍后再试"];
                 });
             }
-        }];
+        } else {
         
-        //Can't save the Gif photo
-        //UIImageWriteToSavedPhotosAlbum(cacheImage, self, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
-        
-        //Expired in iOS9 and later
-        //ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-        //[library writeImageDataToSavedPhotosAlbum:data metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
-        
-        //}] ;
-        
-        
-    } else {
-        //show downloading message
-        [self showErrorMessage:@"图片正在下载，请稍后再试"];
-    }
+            //show the localized recovery suggestion
+            NSString *appName = [NSBundle mainBundle].infoDictionary[@"CFBundleDisplayName"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self showErrorMessage:[NSString stringWithFormat:@"保存失败，由于系统限制，请在“设置-隐私-照片”中，重新允许%@访问相册",appName]];
+            });
+        }
+    }];
+    
 }
 
 #pragma mark did click More button
@@ -473,21 +486,6 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
                 break;
         }
     };
-}
-
-//Result of save the photo
-- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
-{
-    
-    if (error) {
-        //show the localized recovery suggestion
-        NSString *appName = [NSBundle mainBundle].infoDictionary[@"CFBundleDisplayName"];
-        [self showErrorMessage:[NSString stringWithFormat:@"保存失败，由于系统限制，请在“设置-隐私-照片”中，重新允许%@访问相册",appName]];
-        
-    } else {
-        //success
-        //[DMProgressView showSuccessAddedTo:self message:@"保存成功"];
-    }
 }
 
 //Show error message
