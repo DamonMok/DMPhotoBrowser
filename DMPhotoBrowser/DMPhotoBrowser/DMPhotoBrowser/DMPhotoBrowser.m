@@ -13,13 +13,13 @@
 #import <SDWebImageManager.h>
 #import <SDImageCache.h>
 #import <Photos/Photos.h>
-#import "DMProgressView.h"
 #import "DMActionSheetView.h"
+#import "DMProgressHUD.h"
 #import <Photos/Photos.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
 static NSString *reuseID = @"photoBrowser";
-static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
+static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 #define kMargin 10
 #define kLabPageHeight 20
 
@@ -66,7 +66,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
     
     for (UIImageView *srcImgView in _arrSrcImageView) {
         
-        objc_setAssociatedObject(srcImgView, DMPhotoCellProcessValueKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(srcImgView, DMPhotoCellProgressValueKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     
     //Download
@@ -153,17 +153,17 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        CGFloat processValue = [objc_getAssociatedObject(_arrSrcImageView, DMPhotoCellProcessValueKey) doubleValue];
-        if (processValue > 0) return ;
+        CGFloat progressValue = [objc_getAssociatedObject(_arrSrcImageView, DMPhotoCellProgressValueKey) doubleValue];
+        if (progressValue > 0) return ;
         
         [[SDWebImageManager sharedManager] loadImageWithURL:_arrUrl[index] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
             
-            //save the process-value
-            objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProcessValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            //save the progress-value
+            objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProgressValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             
         } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
 
-            objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProcessValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProgressValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         }];
         
     });
@@ -426,7 +426,11 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
                 //success
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    [DMProgressView showSuccessAddedTo:self message:@"保存成功"];
+                    DMProgressHUD *hud = [DMProgressHUD showProgressHUDAddedTo:self];
+                    hud.mode = DMProgressHUDModeStatus;
+                    hud.statusType = DMProgressHUDStatusTypeSuccess;
+                    hud.label.text = @"保存成功";
+                    [hud dismissAfter:1.0];
                 });
             }
         }];
@@ -482,7 +486,7 @@ static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
         
     } else {
         //success
-        [DMProgressView showSuccessAddedTo:self message:@"保存成功"];
+        //[DMProgressView showSuccessAddedTo:self message:@"保存成功"];
     }
 }
 

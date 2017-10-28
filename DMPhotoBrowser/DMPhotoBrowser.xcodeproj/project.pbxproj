@@ -22,9 +22,8 @@
 		E42578E31F8A007400192CE4 /* UIView+layout.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578E21F8A007400192CE4 /* UIView+layout.m */; };
 		E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */; };
 		E42578EB1F8A33C800192CE4 /* DMPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */; };
-		E426BBE41F9359930040F100 /* ProgressSuccess.png in Resources */ = {isa = PBXBuildFile; fileRef = E426BBE01F9359930040F100 /* ProgressSuccess.png */; };
-		E426BBE51F9359930040F100 /* ProgressSuccess@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = E426BBE11F9359930040F100 /* ProgressSuccess@3x.png */; };
-		E426BBE61F9359930040F100 /* DMProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = E426BBE31F9359930040F100 /* DMProgressView.m */; };
+		E425DAD41FA45D9C0051A7B4 /* DMProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = E425DAD21FA45D9C0051A7B4 /* DMProgressHUD.m */; };
+		E425DAD51FA45D9C0051A7B4 /* DMProgressImgs.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E425DAD31FA45D9C0051A7B4 /* DMProgressImgs.bundle */; };
 		E426BBE91F9369480040F100 /* DMActionSheetView.m in Sources */ = {isa = PBXBuildFile; fileRef = E426BBE81F9369480040F100 /* DMActionSheetView.m */; };
 /* End PBXBuildFile section */
 
@@ -76,10 +75,9 @@
 		E42578E71F8A26F600192CE4 /* DMPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoBrowser.m; sourceTree = "<group>"; };
 		E42578E91F8A33C800192CE4 /* DMPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPhotoCell.h; sourceTree = "<group>"; };
 		E42578EA1F8A33C800192CE4 /* DMPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoCell.m; sourceTree = "<group>"; };
-		E426BBE01F9359930040F100 /* ProgressSuccess.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProgressSuccess.png; sourceTree = "<group>"; };
-		E426BBE11F9359930040F100 /* ProgressSuccess@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ProgressSuccess@3x.png"; sourceTree = "<group>"; };
-		E426BBE21F9359930040F100 /* DMProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProgressView.h; sourceTree = "<group>"; };
-		E426BBE31F9359930040F100 /* DMProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProgressView.m; sourceTree = "<group>"; };
+		E425DAD11FA45D9C0051A7B4 /* DMProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMProgressHUD.h; sourceTree = "<group>"; };
+		E425DAD21FA45D9C0051A7B4 /* DMProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMProgressHUD.m; sourceTree = "<group>"; };
+		E425DAD31FA45D9C0051A7B4 /* DMProgressImgs.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DMProgressImgs.bundle; sourceTree = "<group>"; };
 		E426BBE71F9369480040F100 /* DMActionSheetView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMActionSheetView.h; sourceTree = "<group>"; };
 		E426BBE81F9369480040F100 /* DMActionSheetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMActionSheetView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -216,28 +214,19 @@
 				E42578E21F8A007400192CE4 /* UIView+layout.m */,
 				E426BBE71F9369480040F100 /* DMActionSheetView.h */,
 				E426BBE81F9369480040F100 /* DMActionSheetView.m */,
-				E426BBDE1F9359930040F100 /* DMProgressView */,
+				E425DAD01FA45D9C0051A7B4 /* DMProgressHUD */,
 			);
 			path = DMPhotoBrowser;
 			sourceTree = "<group>";
 		};
-		E426BBDE1F9359930040F100 /* DMProgressView */ = {
+		E425DAD01FA45D9C0051A7B4 /* DMProgressHUD */ = {
 			isa = PBXGroup;
 			children = (
-				E426BBDF1F9359930040F100 /* DMImgSources */,
-				E426BBE21F9359930040F100 /* DMProgressView.h */,
-				E426BBE31F9359930040F100 /* DMProgressView.m */,
+				E425DAD11FA45D9C0051A7B4 /* DMProgressHUD.h */,
+				E425DAD21FA45D9C0051A7B4 /* DMProgressHUD.m */,
+				E425DAD31FA45D9C0051A7B4 /* DMProgressImgs.bundle */,
 			);
-			path = DMProgressView;
-			sourceTree = "<group>";
-		};
-		E426BBDF1F9359930040F100 /* DMImgSources */ = {
-			isa = PBXGroup;
-			children = (
-				E426BBE01F9359930040F100 /* ProgressSuccess.png */,
-				E426BBE11F9359930040F100 /* ProgressSuccess@3x.png */,
-			);
-			path = DMImgSources;
+			path = DMProgressHUD;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -350,11 +339,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E425DAD51FA45D9C0051A7B4 /* DMProgressImgs.bundle in Resources */,
 				E42578E01F89FF4D00192CE4 /* images.plist in Resources */,
 				E42578BB1F89EAF600192CE4 /* LaunchScreen.storyboard in Resources */,
-				E426BBE51F9359930040F100 /* ProgressSuccess@3x.png in Resources */,
 				E42578B81F89EAF600192CE4 /* Assets.xcassets in Resources */,
-				E426BBE41F9359930040F100 /* ProgressSuccess.png in Resources */,
 				E42578B61F89EAF600192CE4 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -434,10 +422,10 @@
 				E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */,
 				E42050901F90E08600E9B0D3 /* YYWeakProxy.m in Sources */,
 				E42578B31F89EAF600192CE4 /* ViewController.m in Sources */,
-				E426BBE61F9359930040F100 /* DMProgressView.m in Sources */,
 				E42578B01F89EAF600192CE4 /* AppDelegate.m in Sources */,
 				E426BBE91F9369480040F100 /* DMActionSheetView.m in Sources */,
 				E42578AD1F89EAF600192CE4 /* main.m in Sources */,
+				E425DAD41FA45D9C0051A7B4 /* DMProgressHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

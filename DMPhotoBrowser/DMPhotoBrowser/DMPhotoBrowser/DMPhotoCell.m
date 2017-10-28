@@ -11,10 +11,10 @@
 #import <UIView+WebCache.h>
 #import <FLAnimatedImageView+WebCache.h>
 #import "UIView+layout.h"
-#import "DMProgressView.h"
+#import "DMProgressHUD.h"
 #import <objc/runtime.h>
 
-static void *DMPhotoCellProcessValueKey = "DMPhotoCellProcessValueKey";
+static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
 NSString *const DMPhotoCellWillBeginScrollingNotifiation = @"DMPhotoCellWillScrollNotifiation";
 
@@ -43,7 +43,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 
 @property (nonatomic, strong)CADisplayLink *displayLink;
 
-@property (nonatomic, strong)DMProgressView *progressView;
+@property (nonatomic, strong)DMProgressHUD *progressHUD;
 
 @end
 
@@ -98,6 +98,17 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     }
     
     return _gifView;
+}
+
+- (DMProgressHUD *)progressHUD {
+
+    if (!_progressHUD) {
+        _progressHUD = [DMProgressHUD showProgressHUDAddedTo:self.contentView];
+        _progressHUD.mode = DMProgressHUDModeProgress;
+        _progressHUD.progressType = DMProgressHUDProgressTypeSector;
+    }
+    
+    return _progressHUD;
 }
 
 
@@ -173,7 +184,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 //singleTap: hide the photoBrowser
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
 
-    _progressView.hidden = YES;
+    self.progressHUD.hidden = YES;
     [self removeDpLink];
     
     UIImageView *imgOrGifImgView = _isGif ? _gifView : _imageView;
@@ -215,7 +226,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         
         if (!_downloadFinished) {
             _displayLink.paused = YES;
-            _progressView.hidden = YES;
+            self.progressHUD.hidden = YES;
         }
         
         _panStartPoint = CGPointMake(_containerView.dm_x, _containerView.dm_y);
@@ -268,7 +279,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         if ([self shouldHidePhotoBrowser]) {
             //hide the photoBrowser:large -> thumbnail
             
-            _progressView.hidden = YES;
+            self.progressHUD.hidden = YES;
             
             [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
             [UIView animateWithDuration:0.3 animations:^{
@@ -311,7 +322,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
             } completion:^(BOOL finished) {
                 
                 if (!_downloadFinished) {
-                    _progressView.hidden = NO;
+                    self.progressHUD.hidden = NO;
                     _displayLink.paused = NO;
                 }
                 
@@ -432,7 +443,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 
     _srcImageView.hidden = !_hideSrcImageView;
     //[_progressView hideLoadingView];
-    [_progressView hideProgressView];
+    [self.progressHUD dismiss];
     _isDisplaying = NO;
     [self removeDpLink];
     
@@ -487,16 +498,13 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 //set image
 - (void)loadImage:(UIImageView *)imgOrGifView {
     
-    CGFloat process = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProcessValueKey) doubleValue];
+    CGFloat progress = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProgressValueKey) doubleValue];
     
-    if (process < 1) {
+    if (progress < 1) {
         //downloading
         
-        //ProgressView
-        _progressView = [DMProgressView showProgressViewAddedTo:self.contentView];
-        _progressView.process = process;//show current process
-        
-        //_progressView = [DMProgressView showLoadingViewAddTo:self.contentView];
+        //ProgressHUD
+        self.progressHUD.progress = progress;
         
         imgOrGifView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
         
@@ -506,8 +514,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     } else {
         //download finished
         _displayLink.paused = YES;
-        [_progressView hideProgressView];_progressView = nil;
-        //[_progressView hideLoadingView];
+        [self.progressHUD dismiss];
         
         if (_isGif) {
             
@@ -589,8 +596,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 }
 
 #pragma mark - DisplayLink
-//Refresh process-value
-- (void)refreshProcess {
+//Refresh progress-value
+- (void)refreshProgress {
     
     _isGif ? [self loadImage:_gifView] : [self loadImage:_imageView];
     
@@ -600,7 +607,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 
     if (!_downloadFinished) {
         
-        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(refreshProcess)];
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(refreshProgress)];
         _displayLink.preferredFramesPerSecond = 15;
         _displayLink.paused = NO;
         [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
