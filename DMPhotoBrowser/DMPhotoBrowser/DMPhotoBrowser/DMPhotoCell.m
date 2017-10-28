@@ -496,10 +496,31 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         //ProgressHUD
         if (!_progressHUD) {
             _progressHUD = [DMProgressHUD showProgressHUDAddedTo:self.contentView];
-            _progressHUD.mode = DMProgressHUDModeProgress;
-            _progressHUD.progressType = DMProgressHUDProgressTypeSector;
+            
+            if (_progressType == DMPhotoProgressTypeSector || _progressType == DMPhotoProgressTypeCircle) {
+                
+                _progressHUD.mode = DMProgressHUDModeProgress;
+                
+                if (_progressType == DMPhotoProgressTypeCircle) {
+                    
+                    _progressHUD.progressType = DMProgressHUDProgressTypeCircle;
+                } else if (_progressType == DMPhotoProgressTypeSector) {
+                    
+                    _progressHUD.progressType = DMProgressHUDProgressTypeSector;
+                }
+                
+            } else if (_progressType == DMPhotoProgressTypeLoading) {
+                
+                _progressHUD.mode = DMProgressHUDModeLoading;
+                _progressHUD.loadingType = DMProgressHUDLoadingTypeCircle;
+            }
         }
-        self.progressHUD.progress = progress;
+        
+        if (_progressType == DMPhotoProgressTypeSector || _progressType == DMPhotoProgressTypeCircle) {
+        
+            self.progressHUD.progress = progress;
+        }
+        
         
         imgOrGifView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
         

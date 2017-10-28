@@ -45,6 +45,8 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
 @property (nonatomic, strong)UIPageControl *pageControl;
 
+@property (nonatomic, assign)DMPhotoProgressType progressType;
+
 @end
 
 @implementation DMPhotoBrowser
@@ -249,6 +251,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     }
     
     cell.showAnimation = (_index == indexPath.row && _showAnimation) ? YES : NO;
+    cell.progressType = self.progressType;
     [cell willDisplayCell];
 }
 
@@ -320,6 +323,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     
     _hideSrcImageView = !(options & DMPhotoBrowserShowSrcImgView);
     
+    //photo browser stype
     if (!(options & DMPhotoBrowserStylePageControl) && !(options & DMPhotoBrowserStyleTop)) {
         
         //Default style
@@ -334,7 +338,18 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         //Top style
         [self addStyleTop];
     }
+    
+    //progress type
+    if (options & DMPhotoBrowserProgressLoading) {
         
+        self.progressType = DMPhotoProgressTypeLoading;
+    } else if (options & DMPhotoBrowserProgressCircle) {
+    
+        self.progressType = DMPhotoProgressTypeCircle;
+    } else if (options & DMPhotoBrowserProgressSector) {
+    
+        self.progressType = DMPhotoProgressTypeSector;
+    }
     
 }
 
@@ -491,9 +506,10 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 //Show error message
 - (void)showErrorMessage:(NSString *)message {
 
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-    
     UIViewController *vc = [[UIViewController alloc] init];
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
+
     __weak typeof(alertController) weakAlertCtler = alertController;
     UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         

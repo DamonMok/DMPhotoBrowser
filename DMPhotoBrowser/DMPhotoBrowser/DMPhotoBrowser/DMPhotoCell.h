@@ -11,6 +11,15 @@
 extern NSString *const DMPhotoCellWillBeginScrollingNotifiation;
 extern NSString *const DMPhotoCellDidEndScrollingNotifiation;
 
+typedef NS_ENUM(NSInteger, DMPhotoProgressType) {
+
+    DMPhotoProgressTypeLoading,
+    
+    DMPhotoProgressTypeCircle,
+    
+    DMPhotoProgressTypeSector
+};
+
 @protocol DMPhotoCellDelegate;
 
 @interface DMPhotoCell : UICollectionViewCell
@@ -25,6 +34,8 @@ extern NSString *const DMPhotoCellDidEndScrollingNotifiation;
 @property (nonatomic, assign)BOOL hideSrcImageView;
 
 @property (nonatomic, assign)BOOL showAnimation;
+
+@property (nonatomic, assign)DMPhotoProgressType progressType;
 
 @property (nonatomic, weak)id<DMPhotoCellDelegate> delegate;
 

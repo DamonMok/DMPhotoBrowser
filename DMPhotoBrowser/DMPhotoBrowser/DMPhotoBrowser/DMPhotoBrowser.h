@@ -9,23 +9,22 @@
 #import <UIKit/UIKit.h>
 
 typedef NS_OPTIONS(NSUInteger, DMPhotoBrowserOptions) {
-    /**
-     * By default, when viewing a large image,hide the corresponding source imageView.
-     * Use this flag if you don't want to hide the source imageView.
-     */
+    
+    //By default, when viewing a large image,hide the corresponding source imageView.
+    //Use this flag if you don't want to hide the source imageView.
     DMPhotoBrowserShowSrcImgView = 1 << 0,
     
-    /**
-     * Photo browser style:similar to the UIPageControl.
-     * If you do not set this parameter, use the default style
-     */
-    DMPhotoBrowserStylePageControl = 1 << 1,
     
-    /**
-     * Photo browser style:layout on top
-     * If you do not set this parameter, use the default style
-     */
-    DMPhotoBrowserStyleTop = 1 << 2
+    //Photo browser style:similar to the UIPageControl or Layout on top
+    //If you do not set this parameter, use the default style
+    DMPhotoBrowserStylePageControl = 1 << 1,
+    DMPhotoBrowserStyleTop = 1 << 2,
+    
+    
+    //Progress type
+    DMPhotoBrowserProgressLoading = 1 << 3,
+    DMPhotoBrowserProgressCircle = 1 << 4,
+    DMPhotoBrowserProgressSector = 1 << 5
 };
 
 @interface DMPhotoBrowser : UIView
