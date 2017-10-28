@@ -100,18 +100,6 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     return _gifView;
 }
 
-- (DMProgressHUD *)progressHUD {
-
-    if (!_progressHUD) {
-        _progressHUD = [DMProgressHUD showProgressHUDAddedTo:self.contentView];
-        _progressHUD.mode = DMProgressHUDModeProgress;
-        _progressHUD.progressType = DMProgressHUDProgressTypeSector;
-    }
-    
-    return _progressHUD;
-}
-
-
 #pragma mark - cycle
 - (instancetype)initWithFrame:(CGRect)frame {
 
@@ -184,8 +172,9 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 //singleTap: hide the photoBrowser
 - (void)singleTapHandle:(UITapGestureRecognizer *)tap {
 
-    self.progressHUD.hidden = YES;
     [self removeDpLink];
+    [_progressHUD dismiss];
+    _progressHUD = nil;
     
     UIImageView *imgOrGifImgView = _isGif ? _gifView : _imageView;
     
@@ -279,7 +268,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         if ([self shouldHidePhotoBrowser]) {
             //hide the photoBrowser:large -> thumbnail
             
-            self.progressHUD.hidden = YES;
+            [_progressHUD dismiss];
+            _progressHUD = nil;
             
             [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
             [UIView animateWithDuration:0.3 animations:^{
@@ -442,10 +432,10 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 - (void)didEndDisplayingCell {
 
     _srcImageView.hidden = !_hideSrcImageView;
-    //[_progressView hideLoadingView];
-    [self.progressHUD dismiss];
-    _isDisplaying = NO;
     [self removeDpLink];
+    [self.progressHUD dismiss];
+    self.progressHUD = nil;
+    _isDisplaying = NO;
     
     if (_isGif) {
         
@@ -504,6 +494,11 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         //downloading
         
         //ProgressHUD
+        if (!_progressHUD) {
+            _progressHUD = [DMProgressHUD showProgressHUDAddedTo:self.contentView];
+            _progressHUD.mode = DMProgressHUDModeProgress;
+            _progressHUD.progressType = DMProgressHUDProgressTypeSector;
+        }
         self.progressHUD.progress = progress;
         
         imgOrGifView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
