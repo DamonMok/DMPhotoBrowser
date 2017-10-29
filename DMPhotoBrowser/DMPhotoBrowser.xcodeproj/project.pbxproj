@@ -10,6 +10,7 @@
 		213E80F8C9E58AB3F6956169 /* libPods-DMPhotoBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C45EAEF2EC66BCD015440D5 /* libPods-DMPhotoBrowser.a */; };
 		E420508F1F90E08600E9B0D3 /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E420508C1F90E08600E9B0D3 /* YYFPSLabel.m */; };
 		E42050901F90E08600E9B0D3 /* YYWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = E420508E1F90E08600E9B0D3 /* YYWeakProxy.m */; };
+		E4224B4B1FA5CB5100EC4E2E /* DMPhotoBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E4224B4A1FA5CB5100EC4E2E /* DMPhotoBrowserCell.m */; };
 		E42578AD1F89EAF600192CE4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578AC1F89EAF600192CE4 /* main.m */; };
 		E42578B01F89EAF600192CE4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578AF1F89EAF600192CE4 /* AppDelegate.m */; };
 		E42578B31F89EAF600192CE4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E42578B21F89EAF600192CE4 /* ViewController.m */; };
@@ -52,6 +53,8 @@
 		E420508C1F90E08600E9B0D3 /* YYFPSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYFPSLabel.m; sourceTree = "<group>"; };
 		E420508D1F90E08600E9B0D3 /* YYWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYWeakProxy.h; sourceTree = "<group>"; };
 		E420508E1F90E08600E9B0D3 /* YYWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYWeakProxy.m; sourceTree = "<group>"; };
+		E4224B491FA5CB5100EC4E2E /* DMPhotoBrowserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPhotoBrowserCell.h; sourceTree = "<group>"; };
+		E4224B4A1FA5CB5100EC4E2E /* DMPhotoBrowserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPhotoBrowserCell.m; sourceTree = "<group>"; };
 		E42578A81F89EAF600192CE4 /* DMPhotoBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMPhotoBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E42578AC1F89EAF600192CE4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		E42578AE1F89EAF600192CE4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -165,6 +168,8 @@
 				E42578AF1F89EAF600192CE4 /* AppDelegate.m */,
 				E42578B11F89EAF600192CE4 /* ViewController.h */,
 				E42578B21F89EAF600192CE4 /* ViewController.m */,
+				E4224B491FA5CB5100EC4E2E /* DMPhotoBrowserCell.h */,
+				E4224B4A1FA5CB5100EC4E2E /* DMPhotoBrowserCell.m */,
 				E420508A1F90E08600E9B0D3 /* YYFPSLabel */,
 				E42578DE1F89ED7100192CE4 /* DMPhotoBrowser */,
 				E42578B41F89EAF600192CE4 /* Main.storyboard */,
@@ -420,6 +425,7 @@
 				E420508F1F90E08600E9B0D3 /* YYFPSLabel.m in Sources */,
 				E42578EB1F8A33C800192CE4 /* DMPhotoCell.m in Sources */,
 				E42578E81F8A26F600192CE4 /* DMPhotoBrowser.m in Sources */,
+				E4224B4B1FA5CB5100EC4E2E /* DMPhotoBrowserCell.m in Sources */,
 				E42050901F90E08600E9B0D3 /* YYWeakProxy.m in Sources */,
 				E42578B31F89EAF600192CE4 /* ViewController.m in Sources */,
 				E42578B01F89EAF600192CE4 /* AppDelegate.m in Sources */,

@@ -11,28 +11,43 @@
 #import <UIImageView+WebCache.h>
 #import "DMPhotoBrowser.h"
 #import "YYFPSLabel.h"
+#import "DMPhotoBrowserCell.h"
 
-@interface ViewController ()
+static NSString *reuseID = @"DMPhotoBrowser";
+
+@interface ViewController ()<UITableViewDelegate, UITableViewDataSource>
 
 //url
-@property (nonatomic, strong)NSArray *arrUrl;
+@property (nonatomic, strong)NSArray<DMPhotoBrowserCellModel *> *arrCellModel;
 
 //thumbnail's UIImageView
 @property (nonatomic, strong)NSMutableArray *arrThumbnailImgViews;
+
+@property (nonatomic, strong)UITableView *tableView;
 
 @end
 
 @implementation ViewController
 
-- (NSArray *)arrUrl {
+- (NSArray<DMPhotoBrowserCellModel *> *)arrCellModel {
 
-    if (!_arrUrl) {
+    if (!_arrCellModel) {
         
         NSString *path = [[NSBundle mainBundle] pathForResource:@"images.plist" ofType:nil];
-        _arrUrl = [NSArray arrayWithContentsOfFile:path];
+        NSArray *arrUrl = [NSArray arrayWithContentsOfFile:path];
+        
+        NSMutableArray *arrTemp = [NSMutableArray array];
+        for (int i = 0; i < arrUrl.count; i++) {
+            
+            DMPhotoBrowserCellModel *cellModel = [DMPhotoBrowserCellModel photoBrowserCellModelWithUrls:arrUrl[i]];
+            
+            [arrTemp addObject:cellModel];
+        }
+        
+        _arrCellModel = arrTemp;
     }
     
-    return _arrUrl;
+    return _arrCellModel;
 }
 
 - (NSMutableArray *)arrThumbnailImgViews {
@@ -45,6 +60,19 @@
     return _arrThumbnailImgViews;
 }
 
+- (UITableView *)tableView {
+
+    if (!_tableView) {
+        
+        _tableView = [[UITableView alloc] init];
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
+
+    return _tableView;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -55,69 +83,53 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
-    CGFloat margin = 10;
+    self.tableView.frame = self.view.bounds;
+    [self.view addSubview:self.tableView];
     
-    CGFloat ivX = 0;
-    CGFloat ivY = 0;
-    CGFloat ivWH = (KScreenWidth-5*margin)/3;
-    
-    int row = 0;
-    int col = 0;
-    
-    for (int i = 0; i < self.arrUrl.count; i++) {
-        
-        UIImageView *imageView = [[UIImageView alloc] init];
-        imageView.backgroundColor = [UIColor blackColor];
-        imageView.contentMode = UIViewContentModeScaleAspectFill;
-        imageView.layer.masksToBounds = YES;
-        imageView.userInteractionEnabled = YES;
-        imageView.tag = i;
-        
-        //Gesture
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandle:)];
-        [imageView addGestureRecognizer:tap];
-        
-        NSURL *url = [NSURL URLWithString:self.arrUrl[i][@"thumbnail"]];
-        [imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageProgressiveDownload];
-        
-        row = i/3;
-        col = i%3;
-        
-        ivX = margin+(ivWH+margin)*col;
-        ivY = margin+(ivWH+margin)*row+64;
-        
-        imageView.frame = CGRectMake(ivX, ivY, ivWH, ivWH);
-        
-        [self.view addSubview:imageView];
-        
-        [self.arrThumbnailImgViews addObject:imageView];
-        
-    }
     
 }
 
+#pragma mark - TableView dataSource
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
-- (void)tapHandle:(UITapGestureRecognizer *)tap {
+    return self.arrCellModel.count;
+}
 
-    //get large-photo's URL
-    NSMutableArray *arrUrl = [NSMutableArray array];
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    DMPhotoBrowserCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseID];
     
-    for (NSDictionary *dicUrl in self.arrUrl) {
+    if (!cell) {
         
-        NSURL *url = [NSURL URLWithString:dicUrl[@"large"]];
-        [arrUrl addObject:url];
+        cell = [[DMPhotoBrowserCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseID];
     }
-   
-    [[SDImageCache sharedImageCache] clearMemory];
-    [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
     
-    //Browser
-    DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];
-    photoBrowser.index = (int)tap.view.tag;
+    cell.arrUrl = self.arrCellModel[indexPath.section].arrUrl;
     
-    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrThumbnailImgViews options:DMPhotoBrowserStylePageControl];
+    return cell;
+}
+
+#pragma mark - Tableview delegate
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    DMPhotoBrowserCellModel *cellModel = self.arrCellModel[indexPath.section];
     
-    [self initFPS];
+    return cellModel.cellHeight;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+
+    return 20.0;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+
+    return [NSString stringWithFormat:@"section-%ld", section];
 }
 
 #pragma mark FPS

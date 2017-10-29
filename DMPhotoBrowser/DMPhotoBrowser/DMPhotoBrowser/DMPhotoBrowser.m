@@ -25,15 +25,15 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
 @interface DMPhotoBrowser ()<UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate>{
 
-    NSArray *_arrUrl;
-    NSArray *_arrSrcImageView;
     BOOL _hideSrcImageView;
     BOOL _showAnimation;
     DMPhotoBrowserOptions _options;
 
 }
 
-@property (nonatomic, strong)NSArray *arrSrcImageView;
+@property (nonatomic, strong)NSArray *arrUrl;
+
+@property (nonatomic, strong)NSArray *arrSrcImgView;
 
 @property (nonatomic, strong)UICollectionView *collectionView;
 
@@ -60,13 +60,14 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 - (void)showWithUrls:(NSArray<NSURL *> *)urls thumbnailImageViews:(NSArray<UIImageView *> *)imageViews options:(DMPhotoBrowserOptions)options {
     
     _arrUrl = [NSArray arrayWithArray:urls];
-    _arrSrcImageView = [NSArray arrayWithArray:imageViews];
+    self.arrSrcImgView = [NSArray arrayWithArray:imageViews];
+    
     _options = options;
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_index inSection:0];
     [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
     
-    for (UIImageView *srcImgView in _arrSrcImageView) {
+    for (UIImageView *srcImgView in _arrSrcImgView) {
         
         objc_setAssociatedObject(srcImgView, DMPhotoCellProgressValueKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
@@ -79,7 +80,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 }
 
 
-#pragma mark - lazy load
+#pragma mark - Lazy load
 - (UICollectionView *)collectionView {
 
     if (!_collectionView) {
@@ -115,7 +116,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     return _labPage;
 }
 
-#pragma mark - cycle
+#pragma mark - Cycle
 - (instancetype)init {
 
     if (self = [super init]) {
@@ -145,7 +146,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 - (void)hidePhotoBrowser {
 
     self.collectionView.scrollEnabled = NO;
-    UIImageView *srcImgView = self.arrSrcImageView[[self getCurrentIndex]];
+    UIImageView *srcImgView = self.arrSrcImgView[[self getCurrentIndex]];
     srcImgView.hidden = NO;
     [[SDImageCache sharedImageCache] clearMemory];
     [self removeFromSuperview];
@@ -155,22 +156,23 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        CGFloat progressValue = [objc_getAssociatedObject(_arrSrcImageView, DMPhotoCellProgressValueKey) doubleValue];
+        CGFloat progressValue = [objc_getAssociatedObject(_arrSrcImgView, DMPhotoCellProgressValueKey) doubleValue];
         if (progressValue > 0) return ;
         
         [[SDWebImageManager sharedManager] loadImageWithURL:_arrUrl[index] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
             
             //save the progress-value
-            objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProgressValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(_arrSrcImgView[index], DMPhotoCellProgressValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             
         } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
 
-            objc_setAssociatedObject(_arrSrcImageView[index], DMPhotoCellProgressValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(_arrSrcImgView[index], DMPhotoCellProgressValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         }];
         
     });
 
 }
+
 
 #pragma mark - UICollectionView datasource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -184,7 +186,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
    
     cell.hideSrcImageView = _hideSrcImageView;
     cell.url = _arrUrl[indexPath.row];
-    cell.srcImageView = _arrSrcImageView[indexPath.row];
+    cell.srcImageView = _arrSrcImgView[indexPath.row];
     
     __weak typeof(self) weakSelf = self;
     __weak typeof(cell) weakCell = cell;
@@ -212,7 +214,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     
     cell.DMPhotoCellSingleTap = ^(UIImageView *imgOrGifImgView) {
         
-        UIImageView *srcImgView = weakSelf.arrSrcImageView[[weakSelf getCurrentIndex]];
+        UIImageView *srcImgView = weakSelf.arrSrcImgView[[weakSelf getCurrentIndex]];
         
         CGPoint endPoint = [weakCell.contentView convertPoint:CGPointMake(srcImgView.dm_x, srcImgView.dm_y) toView:imgOrGifImgView];
         
