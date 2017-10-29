@@ -188,7 +188,6 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     cell.srcImageView = _arrSrcImgView[indexPath.row];
     
     __weak typeof(self) weakSelf = self;
-    __weak typeof(cell) weakCell = cell;
     cell.DMPhotoCellPanStateChange = ^(CGFloat alpha) {
         
         weakSelf.collectionView.backgroundColor = [UIColor colorWithWhite:0.f alpha:alpha];

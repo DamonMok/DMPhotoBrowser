@@ -21,7 +21,7 @@ static NSString *reuseID = @"DMPhotoBrowser";
 @property (nonatomic, strong)NSArray<DMPhotoBrowserCellModel *> *arrCellModel;
 
 //thumbnail's UIImageView
-@property (nonatomic, strong)NSMutableArray *arrThumbnailImgViews;
+@property (nonatomic, strong)NSMutableArray *arrThumbnailImgView;
 
 @property (nonatomic, strong)UITableView *tableView;
 
@@ -50,14 +50,14 @@ static NSString *reuseID = @"DMPhotoBrowser";
     return _arrCellModel;
 }
 
-- (NSMutableArray *)arrThumbnailImgViews {
+- (NSMutableArray *)arrThumbnailImgView {
 
-    if (!_arrThumbnailImgViews) {
+    if (!_arrThumbnailImgView) {
         
-        _arrThumbnailImgViews = [NSMutableArray array];
+        _arrThumbnailImgView = [NSMutableArray array];
     }
     
-    return _arrThumbnailImgViews;
+    return _arrThumbnailImgView;
 }
 
 - (UITableView *)tableView {
@@ -85,8 +85,7 @@ static NSString *reuseID = @"DMPhotoBrowser";
     
     self.tableView.frame = self.view.bounds;
     [self.view addSubview:self.tableView];
-    
-    
+
 }
 
 #pragma mark - TableView dataSource
@@ -124,7 +123,7 @@ static NSString *reuseID = @"DMPhotoBrowser";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
 
-    return 200.0;
+    return 20.0;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {

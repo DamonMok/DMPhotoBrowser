@@ -34,6 +34,10 @@
 
 - (void)initViews {
 
+    [self.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
+    [self.arrSrcImgView removeAllObjects];
+    
     CGFloat margin = kMargin;
     
     CGFloat ivX = 0;
@@ -98,9 +102,6 @@
 - (void)setArrUrl:(NSArray *)arrUrl {
 
     _arrUrl = arrUrl;
-    
-    [self.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    [self.arrSrcImgView removeAllObjects];
     
     [self initViews];
 }
