@@ -154,7 +154,6 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEndScrollingCell) name:DMPhotoCellDidEndScrollingNotifiation object:nil];
 }
 
-
 #pragma mark - Gif
 //pause
 -(void)pauseGif
@@ -184,7 +183,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     
     [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
     if (self.DMPhotoCellSingleTap) {
-        self.DMPhotoCellSingleTap(imgOrGifImgView);
+        self.DMPhotoCellSingleTap(_containerView ,imgOrGifImgView);
     }
     
 }
@@ -274,7 +273,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
             [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
             [UIView animateWithDuration:0.3 animations:^{
                 
-                _containerView.frame = _srcImageView.frame;
+                CGRect absolutelyFrame = [_srcImageView convertRect:_srcImageView.bounds toView:[UIApplication sharedApplication].delegate.window];
+                _containerView.frame = absolutelyFrame;
                 
                 if (_isGif) {
                     
@@ -466,7 +466,9 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     
     UIImageView *imgOrGifView = _isGif ? _gifView : _imageView;
     
-    _containerView.frame = _srcImageView.frame;
+    CGRect absolutelyFrame = [_srcImageView convertRect:_srcImageView.bounds toView:[UIApplication sharedApplication].delegate.window];
+    
+    _containerView.frame = absolutelyFrame;
     //placeholder image
     imgOrGifView.image = _srcImageView.image;
     //get thumbnail-imageView's frame

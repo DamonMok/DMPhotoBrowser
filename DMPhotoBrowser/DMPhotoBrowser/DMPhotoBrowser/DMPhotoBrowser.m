@@ -173,7 +173,6 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
 }
 
-
 #pragma mark - UICollectionView datasource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
 
@@ -212,15 +211,15 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         [weakSelf didClickMoreButton];
     };
     
-    cell.DMPhotoCellSingleTap = ^(UIImageView *imgOrGifImgView) {
+    cell.DMPhotoCellSingleTap = ^(UIView *containerView ,UIImageView *imgOrGifImgView) {
         
         UIImageView *srcImgView = weakSelf.arrSrcImgView[[weakSelf getCurrentIndex]];
         
-        CGPoint endPoint = [weakCell.contentView convertPoint:CGPointMake(srcImgView.dm_x, srcImgView.dm_y) toView:imgOrGifImgView];
-        
         [UIView animateWithDuration:0.35 animations:^{
             
-            imgOrGifImgView.frame = CGRectMake(endPoint.x, endPoint.y, srcImgView.dm_width, srcImgView.dm_height);
+            CGRect absolutelyFrame = [srcImgView convertRect:srcImgView.bounds toView:[UIApplication sharedApplication].delegate.window];
+            containerView.frame = absolutelyFrame;
+            imgOrGifImgView.frame = containerView.bounds;
             
             weakSelf.collectionView.backgroundColor = [UIColor colorWithWhite:0.f alpha:0];
         } completion:^(BOOL finished) {

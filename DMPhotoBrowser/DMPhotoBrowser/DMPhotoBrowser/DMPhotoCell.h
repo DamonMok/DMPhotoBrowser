@@ -50,7 +50,7 @@ typedef NS_ENUM(NSInteger, DMPhotoProgressType) {
 @property (nonatomic, copy)void(^DMPhotoCellLongPress)();
 
 //This block will be called after single tapped
-@property (nonatomic, copy)void(^DMPhotoCellSingleTap)(UIImageView *imgOrGifImgView);
+@property (nonatomic, copy)void(^DMPhotoCellSingleTap)(UIView *containerView ,UIImageView *imgOrGifImgView);
 
 
 /**The operations befor the cell will display*/
