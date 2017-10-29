@@ -531,6 +531,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
         //download finished
         _displayLink.paused = YES;
         [self.progressHUD dismiss];
+        self.progressHUD = nil;
         
         if (_isGif) {
             

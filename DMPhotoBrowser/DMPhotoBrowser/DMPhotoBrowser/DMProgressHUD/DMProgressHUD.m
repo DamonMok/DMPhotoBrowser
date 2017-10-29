@@ -111,7 +111,7 @@
     //Background view
     self.vBackground = [[UIView alloc] init];
     self.vBackground.translatesAutoresizingMaskIntoConstraints = NO;
-    self.vBackground.backgroundColor = [UIColor colorWithWhite:0.f alpha:0.8];
+    self.vBackground.backgroundColor = [UIColor clearColor];
     self.vBackground.layer.cornerRadius = 5;
     self.vBackground.layer.masksToBounds = YES;
     [self addSubview:self.vBackground];
