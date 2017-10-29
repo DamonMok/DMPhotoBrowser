@@ -100,6 +100,7 @@
     _arrUrl = arrUrl;
     
     [self.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [self.arrSrcImgView removeAllObjects];
     
     [self initViews];
 }

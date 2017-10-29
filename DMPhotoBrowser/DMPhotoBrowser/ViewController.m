@@ -124,7 +124,7 @@ static NSString *reuseID = @"DMPhotoBrowser";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
 
-    return 20.0;
+    return 200.0;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
