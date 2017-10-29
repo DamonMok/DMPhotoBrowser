@@ -182,6 +182,8 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     }
     
     [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
+    _scrollView.contentOffset = CGPointZero;
+   
     if (self.DMPhotoCellSingleTap) {
         self.DMPhotoCellSingleTap(_containerView ,imgOrGifImgView);
     }
@@ -271,6 +273,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
             _progressHUD = nil;
             
             [_scrollView setZoomScale:_scrollView.minimumZoomScale animated:YES];
+            _scrollView.contentOffset = CGPointZero;
             [UIView animateWithDuration:0.3 animations:^{
                 
                 CGRect absolutelyFrame = [_srcImageView convertRect:_srcImageView.bounds toView:[UIApplication sharedApplication].delegate.window];
