@@ -440,10 +440,8 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
                         //success
                         dispatch_async(dispatch_get_main_queue(), ^{
                             
-                            DMProgressHUD *hud = [DMProgressHUD showProgressHUDAddedTo:self];
-                            hud.mode = DMProgressHUDModeStatus;
-                            hud.statusType = DMProgressHUDStatusTypeSuccess;
-                            hud.label.text = @"保存成功";
+                            DMProgressHUD *hud = [DMProgressHUD showStatusHUDAddedTo:self statusType:DMProgressHUDStatusTypeSuccess];
+                            hud.text = @"保存成功";
                             [hud dismissAfter:1.0];
                         });
                     }
