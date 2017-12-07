@@ -162,7 +162,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         [[SDWebImageManager sharedManager] loadImageWithURL:_arrUrl[index] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
             
             //save the progress-value
-            objc_setAssociatedObject(_arrSrcImgView[index], DMPhotoCellProgressValueKey, [NSNumber numberWithFloat:(CGFloat)receivedSize/expectedSize], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(_arrSrcImgView[index], DMPhotoCellProgressValueKey, [NSNumber numberWithFloat:fabs((CGFloat)receivedSize/expectedSize)], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             
         } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
 
