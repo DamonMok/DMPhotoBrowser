@@ -5,53 +5,61 @@
 	<array>
         <dict>
             <key>large</key>
-            <string>Local_1</string>
+            <string>Local_1.jpeg</string>
         </dict>
         <dict>
             <key>large</key>
-            <string>Local_2</string>
+            <string>Local_2.jpeg</string>
         </dict>
         <dict>
             <key>large</key>
-            <string>Local_3</string>
+            <string>Local_3.jpeg</string>
        </dict>
 	</array>
 	
     <array>
         <dict>
             <key>large</key>
-            <string>Local_4</string>
+            <string>Local_4.jpeg</string>
         </dict>
         <dict>
             <key>large</key>
-            <string>Local_5</string>
+            <string>Local_5.jpeg</string>
         </dict>
         <dict>
             <key>large</key>
-            <string>Local_6</string>
+            <string>Local_6.jpeg</string>
         </dict>
     </array>
     
     <array>
         <dict>
             <key>large</key>
-            <string>Local_7</string>
+            <string>Local_7.jpeg</string>
         </dict>
         <dict>
             <key>large</key>
-            <string>Local_8</string>
+            <string>Local_8.jpeg</string>
         </dict>
         <dict>
             <key>large</key>
-            <string>Local_9</string>
+            <string>Local_9.jpeg</string>
         </dict>
         <dict>
             <key>large</key>
-            <string>Local_10</string>
+            <string>Local_10.jpeg</string>
         </dict>
         <dict>
             <key>large</key>
-            <string>Local_11</string>
+            <string>Local_11.jpeg</string>
+        </dict>
+        <dict>
+            <key>large</key>
+            <string>Local_12.jpeg</string>
+        </dict>
+        <dict>
+            <key>large</key>
+            <string>Local_13.gif</string>
         </dict>
     </array>
     

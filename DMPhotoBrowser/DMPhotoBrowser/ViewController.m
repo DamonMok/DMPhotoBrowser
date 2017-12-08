@@ -10,8 +10,8 @@
 #import "UIView+layout.h"
 #import <UIImageView+WebCache.h>
 #import "DMPhotoBrowser.h"
-#import "YYFPSLabel.h"
 #import "DMPhotoBrowserCell.h"
+#import "YYFPSLabel.h"
 
 static NSString *reuseID = @"DMPhotoBrowser";
 

@@ -32,7 +32,7 @@ typedef NS_OPTIONS(NSUInteger, DMPhotoBrowserOptions) {
 /**
  * The index of the image is currently selected.
  */
-@property (nonatomic, assign)int index;
+@property (nonatomic, assign) int index;
 
 
 /**
@@ -52,5 +52,7 @@ typedef NS_OPTIONS(NSUInteger, DMPhotoBrowserOptions) {
  * @param options Some configurations about photo browser,get more details in 'DMPhotoBrowserOptions'.
  */
 - (void)showWithUrls:(nonnull NSArray<NSURL *> *)urls thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews options:(DMPhotoBrowserOptions)options;
+
+- (void)showWithDatas:(nonnull NSArray<NSData *> *)datas thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews;
 
 @end

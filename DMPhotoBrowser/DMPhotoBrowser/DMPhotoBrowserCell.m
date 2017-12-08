@@ -10,6 +10,7 @@
 #import "UIView+layout.h"
 #import <UIImageView+WebCache.h>
 #import "DMPhotoBrowser.h"
+#import <UIImage+GIF.h>
 
 #define kMargin 10
 #define kImageViewWH (KScreenWidth-5*kMargin)/3
@@ -67,7 +68,7 @@
             [imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageProgressiveDownload];
         } else {
             //From local
-            __block UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.jpeg",self.arrModel[i][@"large"]]];
+            __block UIImage *image = [UIImage imageNamed:self.arrModel[i][@"large"]];
             
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 
@@ -78,8 +79,6 @@
                     imageView.image = image;
                 });
             });
-            
-            
         }
         
         row = i/3;
@@ -99,13 +98,23 @@
 
 - (void)tapHandle:(UITapGestureRecognizer *)tap {
 
-    //get large-photo's URL
-    NSMutableArray *arrUrl = [NSMutableArray array];
+    //Get large-photo's URL/Image
+    NSMutableArray *arrModel = [NSMutableArray array];
 
-    for (NSDictionary *dicUrl in self.arrModel) {
+    for (NSDictionary *dicModel in self.arrModel) {
 
-        NSURL *url = [NSURL URLWithString:dicUrl[@"large"]];
-        [arrUrl addObject:url];
+        if (self.fromInternet) {
+            //From internet
+            NSURL *url = [NSURL URLWithString:dicModel[@"large"]];
+            
+            [arrModel addObject:url];
+        } else {
+            //From local
+            NSString *path = [[NSBundle mainBundle] pathForResource:dicModel[@"large"] ofType:nil];
+            NSData *data = [NSData dataWithContentsOfFile:path];
+            
+            [arrModel addObject:data];
+        }
     }
 
     [[SDImageCache sharedImageCache] clearMemory];
@@ -115,7 +124,13 @@
     DMPhotoBrowser *photoBrowser = [[DMPhotoBrowser alloc] init];
     photoBrowser.index = (int)tap.view.tag;
 
-    [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrSrcImgView options:DMPhotoBrowserStylePageControl|DMPhotoBrowserProgressCircle];
+    if (self.fromInternet) {
+        //Internet
+        [photoBrowser showWithUrls:arrModel thumbnailImageViews:self.arrSrcImgView options:DMPhotoBrowserStylePageControl|DMPhotoBrowserProgressCircle];
+    } else {
+        //Local
+        [photoBrowser showWithDatas:arrModel thumbnailImageViews:self.arrSrcImgView];
+    }
 }
 
 - (void)setArrModel:(NSArray *)arrModel {

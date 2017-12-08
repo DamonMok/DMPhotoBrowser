@@ -18,6 +18,7 @@
 #import <Photos/Photos.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
+
 static NSString *reuseID = @"photoBrowser";
 static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 #define kMargin 10
@@ -27,11 +28,12 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
     BOOL _hideSrcImageView;
     BOOL _showAnimation;
+    BOOL _fromInternet;
     DMPhotoBrowserOptions _options;
 
 }
 
-@property (nonatomic, strong)NSArray *arrUrl;
+@property (nonatomic, strong)NSArray *arrModel; //URL/Image
 
 @property (nonatomic, strong)NSArray *arrSrcImgView;
 
@@ -59,7 +61,9 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
 - (void)showWithUrls:(NSArray<NSURL *> *)urls thumbnailImageViews:(NSArray<UIImageView *> *)imageViews options:(DMPhotoBrowserOptions)options {
     
-    _arrUrl = [NSArray arrayWithArray:urls];
+    _fromInternet = YES;
+    
+    _arrModel = [NSArray arrayWithArray:urls];
     self.arrSrcImgView = [NSArray arrayWithArray:imageViews];
     
     _options = options;
@@ -77,6 +81,31 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     [self requestPhotoAtIndex:_index];
     
     [self configOptions:options];
+}
+
+
+- (void)showWithDatas:(nonnull NSArray<NSData *> *)Datas thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews {
+
+    _fromInternet = NO;
+    
+    _arrModel = [NSArray arrayWithArray:Datas];
+    self.arrSrcImgView = [NSArray arrayWithArray:imageViews];
+    
+    //_options = options;
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_index inSection:0];
+    [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+    
+//    for (UIImageView *srcImgView in _arrSrcImgView) {
+//        
+//        objc_setAssociatedObject(srcImgView, DMPhotoCellProgressValueKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    }
+    
+    //Download
+    //The download is asynchronous and cached.
+    //[self requestPhotoAtIndex:_index];
+    
+    [self configOptions:0];
 }
 
 
@@ -110,7 +139,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         _labPage = [[UILabel alloc] init];
         _labPage.textColor = [UIColor whiteColor];
         _labPage.textAlignment = NSTextAlignmentCenter;
-        _labPage.text = [NSString stringWithFormat:@"%d/%lu",_index+1, _arrUrl.count];
+        _labPage.text = [NSString stringWithFormat:@"%d/%lu",_index+1, _arrModel.count];
     }
     
     return _labPage;
@@ -159,7 +188,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         CGFloat progressValue = [objc_getAssociatedObject(_arrSrcImgView, DMPhotoCellProgressValueKey) doubleValue];
         if (progressValue > 0) return ;
         
-        [[SDWebImageManager sharedManager] loadImageWithURL:_arrUrl[index] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+        [[SDWebImageManager sharedManager] loadImageWithURL:_arrModel[index] options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
             
             //save the progress-value
             objc_setAssociatedObject(_arrSrcImgView[index], DMPhotoCellProgressValueKey, [NSNumber numberWithFloat:fabs((CGFloat)receivedSize/expectedSize)], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -176,15 +205,22 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 #pragma mark - UICollectionView datasource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
 
-    return _arrUrl.count;
+    return _arrModel.count;
 }
 
 - (__kindof DMPhotoCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
 
     DMPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseID forIndexPath:indexPath];
    
+    cell.fromInternet = _fromInternet;
     cell.hideSrcImageView = _hideSrcImageView;
-    cell.url = _arrUrl[indexPath.row];
+    
+    if (_fromInternet) {
+        cell.url = _arrModel[indexPath.row];
+    } else {
+        cell.data = _arrModel[indexPath.row];
+    }
+
     cell.srcImageView = _arrSrcImgView[indexPath.row];
     
     __weak typeof(self) weakSelf = self;
@@ -234,17 +270,17 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 #pragma mark - UICollectionView delegate
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(DMPhotoCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    if (indexPath.row != 0 && indexPath.row != _arrUrl.count-1) {
+    if (indexPath.row != 0 && indexPath.row != _arrModel.count-1) {
         
         [self requestPhotoAtIndex:(int)indexPath.row+1];
         [self requestPhotoAtIndex:(int)indexPath.row-1];
         
-    } else if (indexPath.row == 0 && _arrUrl.count > 1) {
+    } else if (indexPath.row == 0 && _arrModel.count > 1) {
     
         [self requestPhotoAtIndex:(int)indexPath.row];
         [self requestPhotoAtIndex:(int)indexPath.row+1];
         
-    } else if (indexPath.row == _arrUrl.count-1 && _arrUrl.count > 1) {
+    } else if (indexPath.row == _arrModel.count-1 && _arrModel.count > 1) {
     
         [self requestPhotoAtIndex:(int)indexPath.row];
         [self requestPhotoAtIndex:(int)indexPath.row-1];
@@ -271,7 +307,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     
     if (!(_options & DMPhotoBrowserStylePageControl) && !(_options & DMPhotoBrowserStyleTop)) {
         //Default style
-        _labPage.text = [NSString stringWithFormat:@"%d/%lu",currentIndex+1, _arrUrl.count];
+        _labPage.text = [NSString stringWithFormat:@"%d/%lu",currentIndex+1, _arrModel.count];
         [_labPage sizeToFit];
         
     } else if (_options & DMPhotoBrowserStylePageControl) {
@@ -280,7 +316,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         
     } else {
         //Top style
-        _labPage.text = [NSString stringWithFormat:@"%d/%lu",currentIndex+1, _arrUrl.count];
+        _labPage.text = [NSString stringWithFormat:@"%d/%lu",currentIndex+1, _arrModel.count];
         [_labPage sizeToFit];
     }
 }
@@ -378,10 +414,10 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 - (void)addStylePageControl {
 
     _pageControl = [[UIPageControl alloc] init];
-    _pageControl.numberOfPages = _arrUrl.count;
+    _pageControl.numberOfPages = _arrModel.count;
     _pageControl.currentPage = _index;
     
-    CGSize size = [_pageControl sizeForNumberOfPages:_arrUrl.count];
+    CGSize size = [_pageControl sizeForNumberOfPages:_arrModel.count];
     _pageControl.frame = CGRectMake(0, self.dm_height-size.height, size.width, size.height);
     _pageControl.dm_centerX = self.dm_centerX;
     
@@ -419,7 +455,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         if (status == PHAuthorizationStatusAuthorized) {
             
             //Search for cached images
-            NSURL *currentImageUrl = _arrUrl[[self getCurrentIndex]];
+            NSURL *currentImageUrl = _arrModel[[self getCurrentIndex]];
             UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromCacheForKey:currentImageUrl.absoluteString];
             
             if (cacheImage) {
@@ -427,7 +463,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
                 
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
                     
-                    NSString *cacheKey = [[SDWebImageManager sharedManager] cacheKeyForURL:_arrUrl[[self getCurrentIndex]]];
+                    NSString *cacheKey = [[SDWebImageManager sharedManager] cacheKeyForURL:_arrModel[[self getCurrentIndex]]];
                     NSString *cachePath = [[SDImageCache sharedImageCache] defaultCachePathForKey:cacheKey];
                     NSData *imageData = [NSData dataWithContentsOfFile:cachePath];
                     

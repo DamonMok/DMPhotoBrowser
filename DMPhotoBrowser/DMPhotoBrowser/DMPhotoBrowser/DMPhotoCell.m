@@ -13,6 +13,7 @@
 #import "UIView+layout.h"
 #import "DMProgressHUD.h"
 #import <objc/runtime.h>
+#import <NSData+ImageContentType.h>
 
 static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
@@ -79,6 +80,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     if (!_imageView) {
         
         _imageView = [[UIImageView alloc] init];
+        _imageView.backgroundColor = [UIColor blackColor];
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         _imageView.layer.masksToBounds = YES;
         _imageView.userInteractionEnabled = YES;
@@ -422,8 +424,15 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
 #pragma mark - cell's cycle
 - (void)willDisplayCell {
 
-    _isGif = [[_url absoluteString] hasSuffix:@"gif"];
-
+    if (_fromInternet) {
+        
+        _isGif = [[_url absoluteString] hasSuffix:@"gif"];
+    } else {
+        
+        SDImageFormat format = [NSData sd_imageFormatForImageData:_data];
+        _isGif = format == SDImageFormatGIF;
+    }
+    
     _srcImageView.hidden = _hideSrcImageView;
     _isDisplaying = YES;
     _scrollView.zoomScale = 1;
@@ -486,97 +495,124 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     } completion:^(BOOL finished) {
         
         [self loadImage:imgOrGifView];
-        [self addDpLink];
+        
+        if (_fromInternet) {
+            [self addDpLink];
+        }
     }];
 }
 
 //set image
 - (void)loadImage:(UIImageView *)imgOrGifView {
     
-    CGFloat progress = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProgressValueKey) doubleValue];
-    
-    if (progress < 1) {
-        //downloading
+    if (_fromInternet) {
+        //Load image from internet
+        CGFloat progress = [objc_getAssociatedObject(_srcImageView, DMPhotoCellProgressValueKey) doubleValue];
         
-        //ProgressHUD
-        if (!_progressHUD) {
-            _progressHUD = [DMProgressHUD showProgressHUDAddedTo:self.contentView];
+        if (progress < 1) {
+            //downloading
+            
+            //ProgressHUD
+            if (!_progressHUD) {
+                _progressHUD = [DMProgressHUD showProgressHUDAddedTo:self.contentView];
+                
+                if (_progressType == DMPhotoProgressTypeSector || _progressType == DMPhotoProgressTypeCircle) {
+                    
+                    _progressHUD.mode = DMProgressHUDModeProgress;
+                    
+                    if (_progressType == DMPhotoProgressTypeCircle) {
+                        
+                        _progressHUD.progressType = DMProgressHUDProgressTypeCircle;
+                    } else if (_progressType == DMPhotoProgressTypeSector) {
+                        
+                        _progressHUD.progressType = DMProgressHUDProgressTypeSector;
+                    }
+                    
+                } else if (_progressType == DMPhotoProgressTypeLoading) {
+                    
+                    _progressHUD.mode = DMProgressHUDModeLoading;
+                    _progressHUD.loadingType = DMProgressHUDLoadingTypeCircle;
+                }
+            }
             
             if (_progressType == DMPhotoProgressTypeSector || _progressType == DMPhotoProgressTypeCircle) {
                 
-                _progressHUD.mode = DMProgressHUDModeProgress;
-                
-                if (_progressType == DMPhotoProgressTypeCircle) {
-                    
-                    _progressHUD.progressType = DMProgressHUDProgressTypeCircle;
-                } else if (_progressType == DMPhotoProgressTypeSector) {
-                    
-                    _progressHUD.progressType = DMProgressHUDProgressTypeSector;
-                }
-                
-            } else if (_progressType == DMPhotoProgressTypeLoading) {
-                
-                _progressHUD.mode = DMProgressHUDModeLoading;
-                _progressHUD.loadingType = DMProgressHUDLoadingTypeCircle;
+                self.progressHUD.progress = progress;
             }
-        }
-        
-        if (_progressType == DMPhotoProgressTypeSector || _progressType == DMPhotoProgressTypeCircle) {
-        
-            self.progressHUD.progress = progress;
-        }
-        
-        
-        imgOrGifView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
-        
-        _showAnimation = YES;
-        _downloadFinished = NO;
-        
-    } else {
-        //download finished
-        _displayLink.paused = YES;
-        [self.progressHUD dismiss];
-        self.progressHUD = nil;
-        
-        if (_isGif) {
             
-            [[SDWebImageManager sharedManager] loadImageWithURL:_url options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                //from cache
-                if (!error) {
-                    
-                    if (data) {
-                        [self removeDpLink];
-                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                            
-                            FLAnimatedImage *animatedImage = [FLAnimatedImage animatedImageWithGIFData:data];
-                            
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                
-                                _gifView.animatedImage = animatedImage;
-                                [self configTheLastLocation:_gifView];
-                            });
-                        });
-                    } else {
-                        
-                        _displayLink.paused = NO;
-                    }
-                } else {
-                    
-                    [self removeDpLink];
-                }
-            }];
+            
+            imgOrGifView.center = CGPointMake(_containerView.dm_width/2, _containerView.dm_height/2);
+            
+            _showAnimation = YES;
+            _downloadFinished = NO;
             
         } else {
-
-            [_imageView sd_setImageWithURL:_url placeholderImage:_srcImageView.image completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                //from cache
-                if (!error) {
-                    [self configTheLastLocation:_imageView];
-                } else {
+            //download finished
+            _displayLink.paused = YES;
+            [self.progressHUD dismiss];
+            self.progressHUD = nil;
+            
+            if (_isGif) {
+                
+                [[SDWebImageManager sharedManager] loadImageWithURL:_url options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                    //from cache
+                    if (!error) {
+                        
+                        if (data) {
+                            [self removeDpLink];
+                            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                
+                                FLAnimatedImage *animatedImage = [FLAnimatedImage animatedImageWithGIFData:data];
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    
+                                    _gifView.animatedImage = animatedImage;
+                                    [self configTheLastLocation:_gifView];
+                                });
+                            });
+                        } else {
+                            
+                            _displayLink.paused = NO;
+                        }
+                    } else {
+                        
+                        [self removeDpLink];
+                    }
+                }];
+                
+            } else {
+                
+                [_imageView sd_setImageWithURL:_url placeholderImage:_srcImageView.image completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                    //from cache
+                    if (!error) {
+                        [self configTheLastLocation:_imageView];
+                    } else {
+                        
+                        [self removeDpLink];
+                    }
+                }];
+            }
+        }
+    } else {
+        //Load image from local
+        if (_isGif) {
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
+                FLAnimatedImage *animatedImage = [FLAnimatedImage animatedImageWithGIFData:_data];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    [self removeDpLink];
-                }
-            }];
+                    _gifView.animatedImage = animatedImage;
+                    [self configTheLastLocation:_gifView];
+                });
+            });
+            
+        } else {
+            
+            _imageView.image = [UIImage imageWithData:_data];
+            
+            [self configTheLastLocation:_imageView];
         }
     }
 }
