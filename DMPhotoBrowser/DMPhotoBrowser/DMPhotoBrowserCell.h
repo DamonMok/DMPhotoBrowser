@@ -10,7 +10,9 @@
 
 @interface DMPhotoBrowserCell : UITableViewCell
 
-@property (nonatomic, strong) NSArray *arrUrl;
+@property (nonatomic, assign) BOOL fromInternet;
+
+@property (nonatomic, strong) NSArray *arrModel;
 
 @end
 
@@ -19,8 +21,12 @@
 
 @property (nonatomic, strong) NSArray *arrUrl;
 
+@property (nonatomic, strong) NSArray *arrImage;
+
 @property (nonatomic, assign) CGFloat cellHeight;
 
 + (instancetype)photoBrowserCellModelWithUrls:(NSArray *)urls;
+
++ (instancetype)photoBrowserCellModelWithImages:(NSArray *)imgs;
 
 @end

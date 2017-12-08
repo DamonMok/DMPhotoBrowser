@@ -18,31 +18,24 @@ static NSString *reuseID = @"DMPhotoBrowser";
 @interface ViewController ()<UITableViewDelegate, UITableViewDataSource>
 
 //url
-@property (nonatomic, strong)NSArray<DMPhotoBrowserCellModel *> *arrCellModel;
+@property (nonatomic, strong)NSMutableArray<DMPhotoBrowserCellModel *> *arrCellModel;
 
 //thumbnail's UIImageView
 @property (nonatomic, strong)NSMutableArray *arrThumbnailImgView;
 
 @property (nonatomic, strong)UITableView *tableView;
 
+@property (nonatomic, assign) BOOL fromInternet;
+
 @end
 
 @implementation ViewController
 
-- (NSArray<DMPhotoBrowserCellModel *> *)arrCellModel {
+- (NSMutableArray<DMPhotoBrowserCellModel *> *)arrCellModel {
 
     if (!_arrCellModel) {
         
-        NSString *path = [[NSBundle mainBundle] pathForResource:@"images.plist" ofType:nil];
-        NSArray *arrUrl = [NSArray arrayWithContentsOfFile:path];
-        
         NSMutableArray *arrTemp = [NSMutableArray array];
-        for (int i = 0; i < arrUrl.count; i++) {
-            
-            DMPhotoBrowserCellModel *cellModel = [DMPhotoBrowserCellModel photoBrowserCellModelWithUrls:arrUrl[i]];
-            
-            [arrTemp addObject:cellModel];
-        }
         
         _arrCellModel = arrTemp;
     }
@@ -83,6 +76,26 @@ static NSString *reuseID = @"DMPhotoBrowser";
     
     self.view.backgroundColor = [UIColor whiteColor];
     
+    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 150, 40)];
+    
+    UILabel *labDesc = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+    labDesc.text = @"网络图片";
+    labDesc.textColor = [UIColor blackColor];
+    labDesc.font = [UIFont systemFontOfSize:14.0];
+    [labDesc sizeToFit];
+    labDesc.dm_centerY = titleView.dm_height*0.5;
+    [titleView addSubview:labDesc];
+    
+    UISwitch *swt = [[UISwitch alloc] initWithFrame:CGRectMake(labDesc.dm_width+4, 0, 0, 0)];
+    swt.on = YES;
+    self.fromInternet = YES;
+    [swt addTarget:self action:@selector(didChangeSwitchStatus:) forControlEvents:UIControlEventValueChanged];
+    swt.dm_centerY = titleView.dm_centerY;
+    [titleView addSubview:swt];
+    [self didChangeSwitchStatus:swt];
+    
+    self.navigationItem.titleView = titleView;
+    
     self.tableView.frame = self.view.bounds;
     [self.view addSubview:self.tableView];
 
@@ -108,7 +121,9 @@ static NSString *reuseID = @"DMPhotoBrowser";
         cell = [[DMPhotoBrowserCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseID];
     }
     
-    cell.arrUrl = self.arrCellModel[indexPath.section].arrUrl;
+    cell.fromInternet = self.fromInternet;
+    
+    cell.arrModel = self.fromInternet ? self.arrCellModel[indexPath.section].arrUrl : self.arrCellModel[indexPath.section].arrImage;
     
     return cell;
 }
@@ -129,6 +144,40 @@ static NSString *reuseID = @"DMPhotoBrowser";
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
 
     return [NSString stringWithFormat:@"section-%ld", section];
+}
+
+#pragma mark - UISwitch
+- (void)didChangeSwitchStatus:(UISwitch *)sender {
+
+    [self.arrCellModel removeAllObjects];
+    
+    NSString *path = nil;
+    
+    if (sender.on) {
+        //Source from internet
+        path = [[NSBundle mainBundle] pathForResource:@"images_internet.plist" ofType:nil];
+        
+        self.fromInternet = YES;
+        
+    } else {
+        //Source from local
+        path = [[NSBundle mainBundle] pathForResource:@"images_local.plist" ofType:nil];
+        
+        self.fromInternet = NO;
+    }
+    
+    NSArray *arrModel = [NSArray arrayWithContentsOfFile:path];
+    
+    for (int i = 0; i < arrModel.count; i++) {
+        
+        DMPhotoBrowserCellModel *cellModel = nil;
+        
+        cellModel = sender.on ? cellModel = [DMPhotoBrowserCellModel photoBrowserCellModelWithUrls:arrModel[i]] : [DMPhotoBrowserCellModel photoBrowserCellModelWithImages:arrModel[i]];
+        
+        [self.arrCellModel addObject:cellModel];
+    }
+    
+    [self.tableView reloadData];
 }
 
 #pragma mark FPS

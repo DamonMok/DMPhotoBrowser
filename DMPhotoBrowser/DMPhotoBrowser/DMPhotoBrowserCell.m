@@ -47,7 +47,7 @@
     int row = 0;
     int col = 0;
     
-    for (int i = 0; i < self.arrUrl.count; i++) {
+    for (int i = 0; i < self.arrModel.count; i++) {
         
         UIImageView *imageView = [[UIImageView alloc] init];
         imageView.backgroundColor = [UIColor blackColor];
@@ -60,8 +60,27 @@
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandle:)];
         [imageView addGestureRecognizer:tap];
         
-        NSURL *url = [NSURL URLWithString:self.arrUrl[i][@"thumbnail"]];
-        [imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageProgressiveDownload];
+        if (self.fromInternet) {
+            //From internet
+            NSURL *url = [NSURL URLWithString:self.arrModel[i][@"thumbnail"]];
+            
+            [imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageProgressiveDownload];
+        } else {
+            //From local
+            __block UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.jpeg",self.arrModel[i][@"large"]]];
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
+                image = [UIImage imageWithData:UIImageJPEGRepresentation(image, 0.01)];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    imageView.image = image;
+                });
+            });
+            
+            
+        }
         
         row = i/3;
         col = i%3;
@@ -83,7 +102,7 @@
     //get large-photo's URL
     NSMutableArray *arrUrl = [NSMutableArray array];
 
-    for (NSDictionary *dicUrl in self.arrUrl) {
+    for (NSDictionary *dicUrl in self.arrModel) {
 
         NSURL *url = [NSURL URLWithString:dicUrl[@"large"]];
         [arrUrl addObject:url];
@@ -99,9 +118,9 @@
     [photoBrowser showWithUrls:arrUrl thumbnailImageViews:self.arrSrcImgView options:DMPhotoBrowserStylePageControl|DMPhotoBrowserProgressCircle];
 }
 
-- (void)setArrUrl:(NSArray *)arrUrl {
+- (void)setArrModel:(NSArray *)arrModel {
 
-    _arrUrl = arrUrl;
+    _arrModel = arrModel;
     
     [self initViews];
 }
@@ -122,5 +141,18 @@
     
     return cellModel;
 }
+
++ (instancetype)photoBrowserCellModelWithImages:(NSArray *)imgs {
+
+    DMPhotoBrowserCellModel *cellModel = [[self alloc] init];
+    
+    cellModel.arrImage = imgs;
+    
+    CGFloat row = ceilf((CGFloat)imgs.count/3);
+    cellModel.cellHeight = 2*kMargin + kImageViewWH*row + (row-1)*kMargin;
+    
+    return cellModel;
+}
+
 
 @end
