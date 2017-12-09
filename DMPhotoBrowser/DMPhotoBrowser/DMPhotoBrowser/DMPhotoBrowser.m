@@ -11,12 +11,10 @@
 #import "DMPhotoCell.h"
 #import <objc/runtime.h>
 #import <SDWebImageManager.h>
-#import <SDImageCache.h>
 #import <Photos/Photos.h>
 #import "DMActionSheetView.h"
 #import "DMProgressHUD.h"
-#import <Photos/Photos.h>
-#import <AssetsLibrary/AssetsLibrary.h>
+#import "YYFPSLabel.h"
 
 
 static NSString *reuseID = @"photoBrowser";
@@ -165,6 +163,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     self.collectionView.dm_width += kMargin;
     [self addSubview:self.collectionView];
     
+    [self initFPS];
 }
 
 - (void)hidePhotoBrowser {
@@ -579,6 +578,16 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 - (void)dealloc {
 
     NSLog(@"%s", __func__);
+}
+
+#pragma mark FPS
+- (void)initFPS {
+    
+    YYFPSLabel *labFPS = [[YYFPSLabel alloc] initWithFrame:CGRectMake(0, 30, 50, 30)];
+    labFPS.dm_centerX = self.center.x-100;
+    [labFPS sizeToFit];
+    
+    [self addSubview:labFPS];
 }
 
 @end

@@ -8,10 +8,9 @@
 
 #import "ViewController.h"
 #import "UIView+layout.h"
-#import <UIImageView+WebCache.h>
 #import "DMPhotoBrowser.h"
 #import "DMPhotoBrowserCell.h"
-#import "YYFPSLabel.h"
+
 
 static NSString *reuseID = @"DMPhotoBrowser";
 
@@ -180,15 +179,5 @@ static NSString *reuseID = @"DMPhotoBrowser";
     [self.tableView reloadData];
 }
 
-#pragma mark FPS
-- (void)initFPS {
-    
-    YYFPSLabel *labFPS = [[YYFPSLabel alloc] initWithFrame:CGRectMake(0, 30, 50, 30)];
-    labFPS.dm_centerX = self.view.center.x-100;
-    [labFPS sizeToFit];
-    
-    UIWindow *window = [UIApplication sharedApplication].delegate.window;
-    [window addSubview:labFPS];
-}
 
 @end

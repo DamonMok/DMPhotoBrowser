@@ -8,7 +8,6 @@
 
 #import "DMPhotoCell.h"
 #import <UIImageView+WebCache.h>
-#import <UIView+WebCache.h>
 #import <FLAnimatedImageView+WebCache.h>
 #import "UIView+layout.h"
 #import "DMProgressHUD.h"

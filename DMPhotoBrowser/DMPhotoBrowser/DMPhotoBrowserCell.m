@@ -10,7 +10,6 @@
 #import "UIView+layout.h"
 #import <UIImageView+WebCache.h>
 #import "DMPhotoBrowser.h"
-#import <UIImage+GIF.h>
 
 #define kMargin 10
 #define kImageViewWH (KScreenWidth-5*kMargin)/3
@@ -133,7 +132,7 @@
         [photoBrowser showWithUrls:arrModel thumbnailImageViews:self.arrSrcImgView options:DMPhotoBrowserStylePageControl|DMPhotoBrowserProgressCircle];
     } else {
         //Local
-        [photoBrowser showWithDatas:arrModel thumbnailImageViews:self.arrSrcImgView options:DMPhotoBrowserStyleTop];
+        [photoBrowser showWithDatas:arrModel thumbnailImageViews:self.arrSrcImgView];
     }
 }
 
@@ -172,6 +171,9 @@
     
     return cellModel;
 }
+
+
+
 
 
 @end
