@@ -129,7 +129,7 @@
         [photoBrowser showWithUrls:arrModel thumbnailImageViews:self.arrSrcImgView options:DMPhotoBrowserStylePageControl|DMPhotoBrowserProgressCircle];
     } else {
         //Local
-        [photoBrowser showWithDatas:arrModel thumbnailImageViews:self.arrSrcImgView];
+        [photoBrowser showWithDatas:arrModel thumbnailImageViews:self.arrSrcImgView options:DMPhotoBrowserStyleTop];
     }
 }
 

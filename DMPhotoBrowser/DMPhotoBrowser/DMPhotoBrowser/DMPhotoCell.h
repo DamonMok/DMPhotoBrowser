@@ -24,9 +24,9 @@ typedef NS_ENUM(NSInteger, DMPhotoProgressType) {
 
 @interface DMPhotoCell : UICollectionViewCell
 
+//From Local or Internet(Web/Cache)
 @property (nonatomic, assign) BOOL fromInternet;
 
-//URL of the large photo
 @property (nonatomic, strong)NSURL *url; //URL for image
 
 @property (nonatomic, strong) NSData *data; //Data for image

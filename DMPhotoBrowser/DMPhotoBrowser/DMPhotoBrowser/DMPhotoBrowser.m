@@ -28,12 +28,12 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
 
     BOOL _hideSrcImageView;
     BOOL _showAnimation;
-    BOOL _fromInternet;
+    BOOL _fromInternet; //From Local or Internet(Web/Cache)
     DMPhotoBrowserOptions _options;
 
 }
 
-@property (nonatomic, strong)NSArray *arrModel; //URL/Image
+@property (nonatomic, strong)NSArray *arrModel; //URL(Internet)/Data(Local)
 
 @property (nonatomic, strong)NSArray *arrSrcImgView;
 
@@ -83,29 +83,24 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
     [self configOptions:options];
 }
 
+- (void)showWithDatas:(NSArray<NSData *> *)datas thumbnailImageViews:(NSArray<UIImageView *> *)imageViews {
 
-- (void)showWithDatas:(nonnull NSArray<NSData *> *)Datas thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews {
+    [self showWithDatas:datas thumbnailImageViews:imageViews options:0];
+}
+
+- (void)showWithDatas:(nonnull NSArray<NSData *> *)Datas thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews options:(DMPhotoBrowserOptions)options{
 
     _fromInternet = NO;
     
     _arrModel = [NSArray arrayWithArray:Datas];
     self.arrSrcImgView = [NSArray arrayWithArray:imageViews];
     
-    //_options = options;
+    _options = options;
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:_index inSection:0];
     [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
     
-//    for (UIImageView *srcImgView in _arrSrcImgView) {
-//        
-//        objc_setAssociatedObject(srcImgView, DMPhotoCellProgressValueKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-//    }
-    
-    //Download
-    //The download is asynchronous and cached.
-    //[self requestPhotoAtIndex:_index];
-    
-    [self configOptions:0];
+    [self configOptions:options];
 }
 
 

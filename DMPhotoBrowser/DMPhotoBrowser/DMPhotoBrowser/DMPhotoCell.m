@@ -21,6 +21,9 @@ NSString *const DMPhotoCellWillBeginScrollingNotifiation = @"DMPhotoCellWillScro
 
 NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrollingNotifiation";
 
+//The minimum width of image when Gesture-Pan is calling
+static const CGFloat kMinimumWidth = 150.0;
+
 @interface DMPhotoCell ()<UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
     BOOL _downloadFinished;
@@ -237,14 +240,21 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     
     //Update the frame
     CGFloat scale = _containerView.dm_width/_containerView.dm_height;
-    CGFloat decreaseValue = _containerView.dm_width > 150 ? fabs(draggingPoint.y)*0.5 : 0;
-    _containerView.dm_y = _panStartPoint.y + draggingPoint.y;
+    
+    CGFloat decreaseValue = _containerView.dm_width > kMinimumWidth ? fabs(draggingPoint.y)*0.5 : _panStartFrame.size.width-_containerView.dm_width;
+    
+    _containerView.dm_y = _panStartPoint.y + draggingPoint.y;   //Y
     if (_scrollView.zoomScale == 1) {
         
-        _containerView.dm_x = _panStartPoint.x + draggingPoint.x;
-        _containerView.dm_width = _panStartFrame.size.width - decreaseValue;
-        _containerView.dm_height = _containerView.dm_width/scale;
+        _containerView.dm_x = _panStartPoint.x + draggingPoint.x;   //X
+        
+        _containerView.dm_width = _panStartFrame.size.width - decreaseValue;    //Width
+        
+        _containerView.dm_height = _containerView.dm_width/scale;   //Height
+        
+        //Reset X
         if (_containerView.dm_width < _scrollView.dm_width) {
+            
             _containerView.dm_centerX = KScreenWidth*0.5 + draggingPoint.x;
         } else {
             
@@ -264,7 +274,7 @@ NSString *const DMPhotoCellDidEndScrollingNotifiation = @"DMPhotoCellDidEndScrol
     if (self.DMPhotoCellPanStateChange) {
         self.DMPhotoCellPanStateChange(1-(fabs(draggingPoint.y)/200));
     }
-
+    
     //end
     if (pan.state == UIGestureRecognizerStateEnded) {
         

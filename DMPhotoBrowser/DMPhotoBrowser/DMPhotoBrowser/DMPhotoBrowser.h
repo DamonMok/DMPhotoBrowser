@@ -36,23 +36,37 @@ typedef NS_OPTIONS(NSUInteger, DMPhotoBrowserOptions) {
 
 
 /**
- * Show a photo browser.
+ * Show a photo browser.(Internet)
  
  * @param urls The urls for the large-images.
- * @param imageViews The imageViews from source imageViews.
+ * @param imageViews Thumbnail imageViews.
  */
 - (void)showWithUrls:(nonnull NSArray<NSURL *> *)urls thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews;
 
-
 /**
- * Show a photo browser.
+ * Show a photo browser.(Internet)
 
  * @param urls The urls for the large-images.
- * @param imageViews The imageViews from source imageViews.
+ * @param imageViews Thumbnail imageViews.
  * @param options Some configurations about photo browser,get more details in 'DMPhotoBrowserOptions'.
  */
 - (void)showWithUrls:(nonnull NSArray<NSURL *> *)urls thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews options:(DMPhotoBrowserOptions)options;
 
+/**
+ * Show a photo browser.(Local)
+ 
+ * @param datas The datas for the large-images.
+ * @param imageViews Thumbnail imageViews.
+ */
 - (void)showWithDatas:(nonnull NSArray<NSData *> *)datas thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews;
+
+/**
+ * Show a photo browser.(Internet)
+ 
+ * @param datas The datas for the large-images.
+ * @param imageViews Thumbnail imageViews.
+ * @param options Some configurations about photo browser,get more details in 'DMPhotoBrowserOptions'.
+ */
+- (void)showWithDatas:(nonnull NSArray<NSData *> *)datas thumbnailImageViews:(nonnull NSArray<UIImageView *> *)imageViews options:(DMPhotoBrowserOptions)options;
 
 @end
