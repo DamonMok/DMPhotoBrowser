@@ -113,6 +113,10 @@
             NSString *path = [[NSBundle mainBundle] pathForResource:dicModel[@"large"] ofType:nil];
             NSData *data = [NSData dataWithContentsOfFile:path];
             
+            if (!data) {
+                data = [NSData data];
+            }
+            
             [arrModel addObject:data];
         }
     }

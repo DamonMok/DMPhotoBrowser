@@ -449,19 +449,25 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         
         if (status == PHAuthorizationStatusAuthorized) {
             
-            //Search for cached images
-            NSURL *currentImageUrl = _arrModel[[self getCurrentIndex]];
-            UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromCacheForKey:currentImageUrl.absoluteString];
+            NSData *imageData = nil;
             
-            if (cacheImage) {
+            if (_fromInternet) {
+                //From internet
+                //Search for cached images
+                NSString *cacheKey = [[SDWebImageManager sharedManager] cacheKeyForURL:_arrModel[[self getCurrentIndex]]];
+                NSString *cachePath = [[SDImageCache sharedImageCache] defaultCachePathForKey:cacheKey];
+                imageData = [NSData dataWithContentsOfFile:cachePath];
+                
+            } else {
+                //From local
+                imageData = _arrModel[[self getCurrentIndex]];
+            }
+            
+            if (imageData.length) {
                 //save
                 
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-                    
-                    NSString *cacheKey = [[SDWebImageManager sharedManager] cacheKeyForURL:_arrModel[[self getCurrentIndex]]];
-                    NSString *cachePath = [[SDImageCache sharedImageCache] defaultCachePathForKey:cacheKey];
-                    NSData *imageData = [NSData dataWithContentsOfFile:cachePath];
-                    
+             
                     PHAssetCreationRequest *request = [PHAssetCreationRequest creationRequestForAsset];
                     [(PHAssetCreationRequest *)request addResourceWithType:PHAssetResourceTypePhoto data:imageData options:nil];
                     
@@ -492,7 +498,13 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
                 //show downloading message
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    [self showErrorMessage:@"图片正在下载，请稍后再试"];
+                    if (_fromInternet) {
+                        
+                        [self showErrorMessage:@"图片正在下载，请稍后再试"];
+                    } else {
+                    
+                        [self showErrorMessage:@"图片加载失败"];
+                    }
                 });
             }
         } else {
