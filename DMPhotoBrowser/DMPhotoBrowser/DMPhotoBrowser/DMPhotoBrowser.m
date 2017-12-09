@@ -191,6 +191,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
         } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
 
             objc_setAssociatedObject(_arrSrcImgView[index], DMPhotoCellProgressValueKey, @1, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            
         }];
         
     });
@@ -503,7 +504,7 @@ static void *DMPhotoCellProgressValueKey = "DMPhotoCellProgressValueKey";
                         [self showErrorMessage:@"图片正在下载，请稍后再试"];
                     } else {
                     
-                        [self showErrorMessage:@"图片加载失败"];
+                        [self showErrorMessage:@"图片不存在"];
                     }
                 });
             }

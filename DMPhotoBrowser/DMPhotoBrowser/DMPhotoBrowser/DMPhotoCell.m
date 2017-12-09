@@ -570,6 +570,7 @@ static const CGFloat kMinimumWidth = 150.0;
                         
                         if (data) {
                             [self removeDpLink];
+                            
                             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                                 
                                 FLAnimatedImage *animatedImage = [FLAnimatedImage animatedImageWithGIFData:data];
@@ -595,6 +596,8 @@ static const CGFloat kMinimumWidth = 150.0;
                 [_imageView sd_setImageWithURL:_url placeholderImage:_srcImageView.image completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                     //from cache
                     if (!error) {
+                        
+                        [self removeDpLink];
                         [self configTheLastLocation:_imageView];
                     } else {
                         
